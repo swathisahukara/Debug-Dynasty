@@ -14,6 +14,7 @@ from agents.compiled import CompiledGraph  # noqa: E402
 RES = ROOT / "eval" / "results"
 RUN_LOCK = threading.Lock()  # one agent run at a time (the cost meter is process-global)
 RISKS = ("low", "medium", "high")
+PUBLIC = os.environ.get("PUBLIC_MODE", "0") == "1"  # hosted demo: read-only, replay only (no LLM calls, no edits, no source switching)
 
 
 def jload(p, default=None):
@@ -35,7 +36,7 @@ def case_list():
 def state():
     try: cs = case_list()
     except Exception as e: cs = []; print("cases unavailable:", e)
-    return dict(mode=dict(sample=C.SAMPLE_MODE, llm_mock=C.LLM_MOCK, data_source=C.DATA_SOURCE, model=os.environ.get("NEMOTRON_MODEL", "")),
+    return dict(mode=dict(public=PUBLIC, sample=C.SAMPLE_MODE, llm_mock=C.LLM_MOCK, data_source=C.DATA_SOURCE, model=os.environ.get("NEMOTRON_MODEL", "")),
                 cases=cs, scoreboard=jload(RES / "scoreboard.json"), replay=jload(RES / "replay_scoreboard.json"), graph=CompiledGraph().to_json())
 
 
@@ -112,6 +113,8 @@ class H(BaseHTTPRequestHandler):
     def do_POST(self):
         try: b = self.body()
         except ValueError: return self.send(400, {"error": "bad json"})
+        if PUBLIC and self.path in ("/api/source", "/api/rule"): return self.send(403, {"error": "read-only public demo"})
+        if PUBLIC and (b.get("mode") == "agent" or b.get("learn")): return self.send(403, {"error": "the public demo is replay only; live agent runs happen locally"})
         if self.path == "/api/source":
             if b.get("source") not in ("csv", "zetaris"): return self.send(400, {"error": "source must be csv or zetaris"})
             C.DATA_SOURCE = b["source"]; return self.send(200, {"data_source": C.DATA_SOURCE})
@@ -140,5 +143,6 @@ class H(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8765"))
-    print(f"Package Trail UI on http://127.0.0.1:{port}  (data source: {C.DATA_SOURCE}, SAMPLE_MODE={int(C.SAMPLE_MODE)}, LLM_MOCK={int(C.LLM_MOCK)})")
-    ThreadingHTTPServer(("127.0.0.1", port), H).serve_forever()
+    print(f"Package Trail UI on port {port}{' (PUBLIC read-only)' if PUBLIC else ''}  (data source: {C.DATA_SOURCE}, SAMPLE_MODE={int(C.SAMPLE_MODE)}, LLM_MOCK={int(C.LLM_MOCK)})")
+    host = os.environ.get("HOST", "127.0.0.1")  # 0.0.0.0 on a host that sets PORT (Render, Fly)
+    ThreadingHTTPServer((host, port), H).serve_forever()

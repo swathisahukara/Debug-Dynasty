@@ -63,3 +63,6 @@ The v3 Skeptic receives deterministic per-hit facts (for example whether every r
 
 ## Submission docs
 [Sponsor technology](docs/SPONSOR_TECH.md) · [Demo script](docs/DEMO_SCRIPT.md)
+
+## Public demo (read-only)
+A hosted copy runs `PUBLIC_MODE=1` on `data/public/` (see `render.yaml`): replay of the compiled graph, the graph viewer and the scoreboard, with no LLM calls, no rule edits and no data-source switching, so it needs no keys and cannot spend quota. Live agent runs on Nemotron and the Zetaris switch run locally (`python3 -m app.server`). Public URL: [add link here]

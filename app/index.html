@@ -98,6 +98,7 @@ td.n{font-family:var(--mono)}
       <label>Data source</label>
       <select id="source"><option value="csv">Local CSV (same rows)</option><option value="zetaris">Zetaris Lightning SQL (live)</option></select>
       <button class="go" id="go">Investigate</button>
+      <p class="note hidden" id="pubnote">Public demo: replay and read-only graph. Live agent runs on Nemotron and the live Zetaris switch run locally; see the demo video and README.</p>
       <p class="note">Indicators are risk signals, not accusations. Not a malware verdict.</p>
     </div>
     <div>
@@ -160,6 +161,12 @@ async function load(){
   $("#badges").innerHTML=[`<span class="badge ${m.sample?"on":""}">SAMPLE_MODE=${m.sample?1:0}</span>`,`<span class="badge ${m.llm_mock?"on":""}">LLM_MOCK=${m.llm_mock?1:0}</span>`,
     `<span class="badge on">Zetaris</span>`,`<span class="badge on">Meterless Nightshift</span>`,`<span class="badge on">${esc(m.model||"nemotron")}</span>`].join("");
   $("#source").value=m.data_source;
+  if(m.public){
+    document.querySelector("input[value=agent]").closest("label").style.display="none";
+    $("#learn").closest("label").style.display="none"; $("#source").previousElementSibling.style.display="none"; $("#source").style.display="none";
+    $("#badges").insertAdjacentHTML("beforeend",`<span class="badge on">public demo: replay only</span>`);
+    $("#pubnote").classList.remove("hidden");
+  }
   const pk=[...new Set(ST.cases.map(c=>c.package))]; $("#pkgs").innerHTML=pk.map(p=>`<option value="${esc(p)}">`).join("");
   $("#presets").innerHTML=ST.cases.filter(c=>c.positive).map((c,i)=>`<span class="chip bad" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)} <small style="color:var(--muted)">${esc(c.as_of.slice(0,4))}</small></span>`).join("")
     +ST.cases.filter(c=>!c.positive).slice(0,4).map(c=>`<span class="chip ok" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)}</span>`).join("");
@@ -175,7 +182,7 @@ function renderGraph(g){
   $("#gi").innerHTML=g.nodes.filter(n=>n.type==="indicator").map(n=>`<div class="node"><b>${esc(n.impl)}</b><code>${esc(n.description)}</code></div>`).join("")
     +`<div class="node"><b>params</b><code>${esc(JSON.stringify(g.params))}</code></div>`;
   $("#gr").innerHTML=g.rules.map(r=>`<div class="node"><b>${esc(r.when.split("+").join("  +  "))}</b>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:6px"><select data-when="${esc(r.when)}">${["low","medium","high"].map(x=>`<option ${x===r.risk?"selected":""}>${x}</option>`).join("")}</select><span class="cited">support ${r.support} · agreement ${r.agreement}</span></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:6px"><select data-when="${esc(r.when)}" ${ST.mode.public?"disabled":""}>${["low","medium","high"].map(x=>`<option ${x===r.risk?"selected":""}>${x}</option>`).join("")}</select><span class="cited">support ${r.support} · agreement ${r.agreement}</span></div>
     <code>${esc(r.rationale)}</code><code>source: ${esc(r.source)}</code></div>`).join("");
   document.querySelectorAll("#gr select").forEach(s=>s.onchange=async()=>{
     const r=await fetch("/api/rule",{method:"POST",body:JSON.stringify({when:s.dataset.when,risk:s.value})}); renderGraph(await r.json());});

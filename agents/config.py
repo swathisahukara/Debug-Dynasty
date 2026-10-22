@@ -17,7 +17,7 @@ load_env()
 SAMPLE_MODE = os.environ.get("SAMPLE_MODE", "0") == "1"
 LLM_MOCK = os.environ.get("LLM_MOCK", "0") == "1"
 DATA_SOURCE = os.environ.get("DATA_SOURCE", "csv" if SAMPLE_MODE else "zetaris")  # zetaris | csv
-DATA_DIR = ROOT / ("data/sample" if SAMPLE_MODE else "data/build")
+DATA_DIR = ROOT / os.environ.get("DATA_DIR", "data/sample" if SAMPLE_MODE else "data/build")  # DATA_DIR=data/public for the hosted demo
 # Cost meter: Nightshift reports 0 USD on the free trial, so estimate from tokens (override in .env).
 USD_PER_MTOK_IN = float(os.environ.get("USD_PER_MTOK_IN", "0.20"))
 USD_PER_MTOK_OUT = float(os.environ.get("USD_PER_MTOK_OUT", "0.60"))
