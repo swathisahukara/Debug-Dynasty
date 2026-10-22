@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Package Trail</title>
+<style>
+:root{
+  --bg:#0e1116;--panel:#151a22;--panel2:#1b212b;--line:#262e3a;--text:#e6e9ef;--muted:#8b95a5;
+  --accent:#6ea8fe;--low:#3fb27f;--med:#e8a93a;--high:#e5534b;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:light){:root{--bg:#f5f6f8;--panel:#fff;--panel2:#f0f2f5;--line:#dde1e8;--text:#14181f;--muted:#5d6879;--accent:#2563eb;--low:#168a5b;--med:#b7791f;--high:#c53030}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0;letter-spacing:.2px}
+h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:8px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{font:12px var(--mono);padding:3px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);background:var(--panel)}
+.badge.on{color:var(--accent);border-color:var(--accent)}
+nav{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line)}
+nav button{background:none;border:0;color:var(--muted);padding:12px 14px;font:inherit;cursor:pointer;border-bottom:2px solid transparent}
+nav button.on{color:var(--text);border-color:var(--accent)}
+main{padding:20px 24px;max-width:1280px;margin:0 auto}
+.grid{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:18px}
+.grid>div{min-width:0}
+@media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 12px;font-weight:600}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input[type=text],input[type=datetime-local],select{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:13px var(--mono)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font:12px var(--mono);background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:4px 8px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip.bad{border-left:3px solid var(--high)}.chip.ok{border-left:3px solid var(--low)}
+.radio{display:flex;gap:8px;align-items:flex-start;padding:8px;border:1px solid var(--line);border-radius:6px;margin-top:6px;cursor:pointer}
+.radio small{display:block;color:var(--muted)}
+button.go{width:100%;margin-top:14px;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px;font:600 14px inherit;cursor:pointer}
+button.go:disabled{opacity:.5;cursor:wait}
+.verdict{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.pill{font:700 13px var(--mono);padding:6px 14px;border-radius:99px;text-transform:uppercase;letter-spacing:1px;color:#fff;background:var(--muted)}
+.pill.low{background:var(--low)}.pill.medium{background:var(--med)}.pill.high{background:var(--high)}.pill.unknown{background:var(--muted)}
+.meter{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.meter div{background:var(--panel2);border-radius:8px;padding:10px}
+.meter b{display:block;font:600 18px var(--mono)}.meter span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.feed{max-height:340px;overflow:auto;font:12.5px/1.55 var(--mono)}
+.step{padding:6px 0;border-bottom:1px dashed var(--line)}
+.step .r{display:inline-block;min-width:78px;color:var(--accent)}
+.step.err .r,.step.rej .r{color:var(--high)}.step.good .r{color:var(--low)}
+.step{overflow-wrap:anywhere}.step small{display:block;color:var(--muted);margin-left:78px;white-space:pre-wrap;overflow-wrap:anywhere}
+.spin::after{content:" ⏳"}
+svg text{font:10px var(--mono);fill:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+td.n{font-family:var(--mono)}
+.best{color:var(--low);font-weight:700}
+.dag{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.dag{grid-template-columns:1fr}}
+.node{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px}
+.node b{font:600 12px var(--mono);color:var(--accent)}.node code{display:block;margin-top:6px;color:var(--muted);font:11px var(--mono);white-space:pre-wrap;word-break:break-word}
+.note{color:var(--muted);font-size:12px;margin-top:10px}
+.cited{font:12px var(--mono);color:var(--muted)}
+.cited span{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;margin:2px 4px 2px 0;display:inline-block}
+.bar{height:8px;border-radius:4px;background:var(--accent);margin-top:4px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Package Trail <span>compile once, replay for free: explainable supply-chain risk indicators for npm</span></h1>
+  <div class="badges" id="badges"></div>
+</header>
+<nav>
+  <button data-tab="inv" class="on">Investigate</button>
+  <button data-tab="graph">Compiled graph</button>
+  <button data-tab="score">Scoreboard</button>
+</nav>
+<main>
+
+<section id="tab-inv">
+  <div class="grid">
+    <div class="card">
+      <h2>Question</h2>
+      <label>Package</label>
+      <input type="text" id="pkg" list="pkgs" placeholder="e.g. ua-parser-js" autocomplete="off">
+      <datalist id="pkgs"></datalist>
+      <label>Evaluate as of (UTC cutoff; blank = latest data)</label>
+      <input type="datetime-local" id="asof">
+      <label>Demo cases (answer key, fixed cutoffs)</label>
+      <div class="chips" id="presets"></div>
+      <label>How to answer</label>
+      <label class="radio"><input type="radio" name="mode" value="replay" checked><span>Replay compiled graph<small>deterministic, 0 LLM calls, cites exact package@version rows</small></span></label>
+      <label class="radio"><input type="radio" name="mode" value="agent"><span>Agent loop on Nemotron<small>Planner, Retriever, Skeptic, Evaluator, Reporter with retries</small></span></label>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="learn"> Compile on miss (unseen combination runs the agent once and learns a rule)</label>
+      <label>Data source</label>
+      <select id="source"><option value="csv">Local CSV (same rows)</option><option value="zetaris">Zetaris Lightning SQL (live)</option></select>
+      <button class="go" id="go">Investigate</button>
+      <p class="note">Indicators are risk signals, not accusations. Not a malware verdict.</p>
+    </div>
+    <div>
+      <div class="card" id="verdictCard">
+        <h2>Verdict</h2>
+        <div id="verdict" class="note">Pick a demo case or type a package, then Investigate.</div>
+        <div class="meter">
+          <div><b id="mCalls">0</b><span>LLM calls (last)</span></div>
+          <div><b id="mUsd">$0</b><span>Est. cost (last)</span></div>
+          <div><b id="mSess">$0</b><span>Session total</span></div>
+          <div><b id="mSave">–</b><span>vs single-shot</span></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h2>Release timeline (last 45 releases before the cutoff)</h2>
+        <div id="tl" class="note">No data yet.</div>
+        <div class="legend"><span><i style="background:var(--muted)"></i>release</span><span><i style="background:var(--med)"></i>indicator hit</span><span><i style="background:var(--accent)"></i>synthetic override row</span></div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h2>Agent trace</h2>
+        <div class="feed" id="feed"><div class="note">Steps appear here live.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-graph" class="hidden">
+  <div class="card">
+    <h2>Decision graph compiled from agent runs (editable JSON: graphs/package_trail_graph.json)</h2>
+    <div class="dag">
+      <div><div class="note" style="margin:0 0 8px">1. Zetaris queries</div><div id="gq"></div></div>
+      <div><div class="note" style="margin:0 0 8px">2. Indicators (deterministic)</div><div id="gi"></div></div>
+      <div><div class="note" style="margin:0 0 8px">3. Rule table: change a verdict and the next replay uses it</div><div id="gr"></div></div>
+    </div>
+    <p class="note">Replay of an unseen indicator combination goes to the agent loop once; its verdict is compiled into a new rule here. Rules edited in this page are marked "edited in UI".</p>
+  </div>
+</section>
+
+<section id="tab-score" class="hidden">
+  <div class="card"><h2>40-case evaluation: 10 incidents, 30 controls (agent run on Nemotron via Nightshift)</h2><div id="sb"></div></div>
+  <div class="card" style="margin-top:18px"><h2>Compile and replay over a package x month grid</h2><div id="rp"></div></div>
+  <div class="card" style="margin-top:18px"><h2>Honest limits</h2>
+    <p class="note" style="font-size:13px;color:var(--text)">Detection is capped at 5/10 by the metadata indicators: five incidents leave no trace in registry metadata. The rules-only baseline matches the agent's false-alarm rate; the agent adds cited evidence (11/11 precision vs 11/17 single-shot), explanations, and a path to compiled rules. Some rules were tuned after seeing results on the same cases; the synthetic override layer and the answer key are declared in the README.</p></div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let ST=null, session=0;
+const SINGLE_PER_CASE=()=>ST?.scoreboard?.single?.est_usd_per_case||0.00191;
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  ["inv","graph","score"].forEach(t=>$("#tab-"+t).classList.toggle("hidden",t!==b.dataset.tab));
+});
+
+async function load(){
+  ST=await (await fetch("/api/state")).json();
+  const m=ST.mode;
+  $("#badges").innerHTML=[`<span class="badge ${m.sample?"on":""}">SAMPLE_MODE=${m.sample?1:0}</span>`,`<span class="badge ${m.llm_mock?"on":""}">LLM_MOCK=${m.llm_mock?1:0}</span>`,
+    `<span class="badge on">Zetaris</span>`,`<span class="badge on">Meterless Nightshift</span>`,`<span class="badge on">${esc(m.model||"nemotron")}</span>`].join("");
+  $("#source").value=m.data_source;
+  const pk=[...new Set(ST.cases.map(c=>c.package))]; $("#pkgs").innerHTML=pk.map(p=>`<option value="${esc(p)}">`).join("");
+  $("#presets").innerHTML=ST.cases.filter(c=>c.positive).map((c,i)=>`<span class="chip bad" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)} <small style="color:var(--muted)">${esc(c.as_of.slice(0,4))}</small></span>`).join("")
+    +ST.cases.filter(c=>!c.positive).slice(0,4).map(c=>`<span class="chip ok" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)}</span>`).join("");
+  document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{const c=ST.cases[ch.dataset.i];$("#pkg").value=c.package;$("#asof").value=c.as_of;});
+  renderGraph(ST.graph); renderScore();
+}
+
+$("#source").onchange=async e=>{await fetch("/api/source",{method:"POST",body:JSON.stringify({source:e.target.value})}); load();};
+
+function renderGraph(g){
+  ST.graph=g;
+  $("#gq").innerHTML=g.nodes.filter(n=>n.type==="zetaris_query").map(n=>`<div class="node"><b>${esc(n.id)}</b><code>${esc(n.sql)}</code></div>`).join("");
+  $("#gi").innerHTML=g.nodes.filter(n=>n.type==="indicator").map(n=>`<div class="node"><b>${esc(n.impl)}</b><code>${esc(n.description)}</code></div>`).join("")
+    +`<div class="node"><b>params</b><code>${esc(JSON.stringify(g.params))}</code></div>`;
+  $("#gr").innerHTML=g.rules.map(r=>`<div class="node"><b>${esc(r.when.split("+").join("  +  "))}</b>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:6px"><select data-when="${esc(r.when)}">${["low","medium","high"].map(x=>`<option ${x===r.risk?"selected":""}>${x}</option>`).join("")}</select><span class="cited">support ${r.support} · agreement ${r.agreement}</span></div>
+    <code>${esc(r.rationale)}</code><code>source: ${esc(r.source)}</code></div>`).join("");
+  document.querySelectorAll("#gr select").forEach(s=>s.onchange=async()=>{
+    const r=await fetch("/api/rule",{method:"POST",body:JSON.stringify({when:s.dataset.when,risk:s.value})}); renderGraph(await r.json());});
+}
+
+function renderScore(){
+  const s=ST.scoreboard, r=ST.replay; if(!s){$("#sb").textContent="Run python3 -m eval.run_eval first.";return;}
+  const rows=[["rules","Rules only"],["single","Single-shot LLM"],["agent","Agent loop (Planner/Skeptic/Evaluator/Reporter)"],["agent_mem","Agent loop + Meterless H-MEM memory (chronological)"]].filter(([k])=>s[k]);
+  $("#sb").innerHTML=`<table><tr><th>System</th><th>Detection</th><th>False alarms</th><th>Evidence precision</th><th>LLM calls/case</th><th>Est. $/case</th><th>Sec/case</th></tr>`+
+    rows.map(([k,n])=>{const x=s[k];return `<tr><td>${n}</td><td class="n">${x.detection}</td><td class="n ${k!=="single"?"best":""}">${x.false_alarm}</td><td class="n">${x.evidence_precision}</td><td class="n">${x.llm_calls_per_case}</td><td class="n">$${x.est_usd_per_case}</td><td class="n">${x.seconds_per_case}</td></tr>`}).join("")+`</table>`;
+  if(!r){$("#rp").textContent="Run python3 -m eval.run_replay first.";return;}
+  const mx=Math.max(r.projected_usd.single_shot_on_every_cell,1e-9);
+  const b=(l,v)=>`<div style="margin:10px 0"><div style="display:flex;justify-content:space-between"><span>${l}</span><b class="n">$${v}</b></div><div class="bar" style="width:${Math.max(.5,v/mx*100)}%"></div></div>`;
+  $("#rp").innerHTML=`<p class="note" style="font-size:13px;color:var(--text)">${r.grid.cells.toLocaleString()} package-date cells (${r.grid.packages} packages). ${r.rules_in_graph} compiled rules. Replay: <b>${r.replay_llm_calls} LLM calls</b>, ${r.replay_false_alarms_on_control_cells} control-cell false alarms.</p>`+
+    b("Single-shot LLM on every cell",r.projected_usd.single_shot_on_every_cell)+b("Agent loop on every flagged cell",r.projected_usd.agent_loop_on_every_flagged_cell)+b("Compiled replay",r.projected_usd.compiled_replay)+
+    `<table style="margin-top:14px"><tr><th>Held out incident (rule compiled without it)</th><th>Replay</th><th>Path</th><th>Agent</th></tr>`+
+    r.leave_one_incident_out.map(x=>`<tr><td>${esc(x.case)}</td><td class="n">${x.replay}</td><td class="n">${x.path}</td><td class="n">${x.agent}</td></tr>`).join("")+`</table>`;
+}
+
+function timeline(rows,asOf){
+  if(!rows.length){$("#tl").textContent="No releases before the cutoff.";return;}
+  const W=900,H=96,pad=16,step=(W-2*pad)/Math.max(1,rows.length-1);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="release timeline"><line x1="${pad}" x2="${W-pad}" y1="52" y2="52" stroke="var(--line)"/>`;
+  rows.forEach((r,i)=>{const x=pad+i*step,hit=!!r.hit,col=hit?"var(--med)":(r.source&&r.source!=="npm"?"var(--accent)":"var(--muted)");
+    s+=`<circle cx="${x}" cy="52" r="${hit?7:3.5}" fill="${col}"><title>${esc(r.version)} · ${esc(r.t)} · ${esc(r.publisher)}${r.scripts?" · "+esc(r.scripts):""}${hit?" · "+esc(r.hit):""}</title></circle>`;
+    if(hit)s+=`<text x="${x}" y="${i%2?82:30}" text-anchor="${i>rows.length-4?"end":"middle"}">${esc(r.version)} ${esc(r.hit.replace(/_/g," "))}</text>`;});
+  $("#tl").innerHTML=s+`<text x="${W-pad}" y="${H-2}" text-anchor="end">cutoff ${esc(asOf)}</text></svg>`;
+}
+
+function feed(cls,role,text,sub){const d=document.createElement("div");d.className="step "+cls;d.innerHTML=`<span class="r">${esc(role)}</span>${esc(text)}${sub?`<small>${esc(sub)}</small>`:""}`;$("#feed").appendChild(d);$("#feed").scrollTop=1e9;return d;}
+let pending=null;
+function logLine(rec){
+  const e=rec.event;
+  if(e==="retriever")feed("","retriever",`${rec.releases} releases up to the cutoff, ${rec.hits.length} indicator hit(s)`,rec.hits.map(h=>h.join(" @ ")).join("\n"));
+  else if(e==="evidence")feed("","evidence","Pseudonymized packet built (pkg-xxxx, acct-N, hours before T0)",rec.hits.map(h=>`${h.id} ${h.indicator} ${h.row}: ${h.detail}${h.facts?"\n   facts "+JSON.stringify(h.facts):""}`).join("\n"));
+  else if(e==="planner")feed("","planner",rec.plan.note,"focus: "+rec.plan.focus.join(", "));
+  else if(e==="hmem_recall")feed("","h-mem",`recalled ${rec.recalled.length} similar past case(s) as context only`);
+  else if(e==="agent_start"){pending=feed("spin",rec.role,`calling Nemotron (attempt ${rec.attempt+1})`);}
+  else if(e==="agent"){
+    if(pending){pending.remove();pending=null;}
+    if(rec.transport_error)return feed("err",rec.role,"transport error",rec.transport_error);
+    const o=rec.output||{};
+    if(rec.errors&&rec.errors.length)feed("rej","evaluator",`rejected ${rec.role} output, asking for a retry`,rec.errors.join("\n"));
+    else if(rec.role==="skeptic")feed("good","skeptic","assessed every hit, evaluator accepted",(o.assessments||[]).map(a=>`${a.hit}: ${a.keep?"KEEP":"CLEARED"}  ${(a.benign_explanations||[]).join("; ")}`).join("\n"));
+    else if(rec.role==="reporter")feed("good","reporter","report accepted: "+(o.risk_level||"").toUpperCase(),o.summary||"");
+  }
+}
+
+$("#go").onclick=async()=>{
+  const pkg=$("#pkg").value.trim(); if(!pkg)return;
+  const mode=document.querySelector("input[name=mode]:checked").value;
+  $("#go").disabled=true; $("#feed").innerHTML=""; $("#tl").textContent="Loading..."; $("#verdict").innerHTML=`<span class="note">Running ${mode==="agent"?"agent loop (about 10 to 90 s on Nemotron)":"replay"}...</span>`;
+  try{
+    const resp=await fetch("/api/investigate",{method:"POST",body:JSON.stringify({package:pkg,as_of:$("#asof").value,mode,learn:$("#learn").checked})});
+    if(!resp.ok){$("#verdict").textContent=(await resp.json()).error;return;}
+    const rd=resp.body.getReader(),dec=new TextDecoder();let buf="";
+    for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
+      let i;while((i=buf.indexOf("\n\n"))>=0){const ev=JSON.parse(buf.slice(6,i));buf=buf.slice(i+2);handle(ev);}}
+  }catch(err){$("#verdict").textContent="Request failed: "+err;}
+  finally{$("#go").disabled=false;if(pending){pending.remove();pending=null;}}
+};
+
+function handle(ev){
+  if(ev.type==="timeline")timeline(ev.rows,ev.as_of);
+  else if(ev.type==="step")feed("",ev.role,ev.text,(ev.hits||[]).map(h=>`${h.indicator} @ ${h.version}: ${h.detail}${h.facts?"\n   facts "+JSON.stringify(h.facts):""}`).join("\n"));
+  else if(ev.type==="log")logLine(ev.rec);
+  else if(ev.type==="error"){$("#verdict").innerHTML=`<span style="color:var(--high)">${esc(ev.text)}</span>`;feed("err","error",ev.text);}
+  else if(ev.type==="result"){
+    const m=ev.meter||{calls:0,est_usd:0};session+=m.est_usd||0;
+    const ref=SINGLE_PER_CASE();
+    $("#mCalls").textContent=m.calls||0;$("#mUsd").textContent="$"+(m.est_usd||0).toFixed(5);$("#mSess").textContent="$"+session.toFixed(5);
+    $("#mSave").textContent=!(m.calls)?"free (0 calls)":(m.est_usd||0)<ref?`${Math.round((1-(m.est_usd||0)/ref)*100)}% cheaper`:"–";
+    const ind=(ev.indicators||[]).map(i=>`<li><b>${esc(i.hit)}</b> ${esc(i.why)} <span class="cited">${(i.rows||[]).map(r=>`<span>${esc(r)}${ev.row_versions&&ev.row_versions[r]?" → v"+esc(ev.row_versions[r]):""}</span>`).join("")}</span></li>`).join("");
+    $("#verdict").innerHTML=`<div class="verdict"><span class="pill ${esc(ev.risk)}">${esc(ev.risk)} risk indicators</span><span class="note" style="margin:0">${esc(ev.mode==="replay"?"path: "+ev.path+(ev.rule?" · rule: "+ev.rule:""):`agent loop · ${ev.retries} evaluator retries · skeptic kept ${ev.kept??0}/${ev.hits} · ${ev.wall_s}s`)}</span></div>
+      <p style="margin:12px 0 6px">${esc(ev.summary||"")}</p>${ind?`<ul style="margin:6px 0 10px;padding-left:18px">${ind}</ul>`:""}
+      <div class="cited">${(ev.cited||[]).map(c=>`<span>${esc(c.indicator)} · ${esc(c.row)}</span>`).join("")||"no cited rows (no indicator fired)"}</div>`;
+  }
+}
+load();
+</script>
+</body>
+</html>

@@ -51,7 +51,7 @@ def run_case(c, system):
 
 def score(rows):
     s = {}
-    for system in ("rules", "single", "agent"):
+    for system in ("rules", "single", "agent", "agent_mem"):
         rs = [r for r in rows if r["system"] == system]
         if not rs: continue
         pos, neg = [r for r in rs if r["positive"]], [r for r in rs if not r["positive"]]

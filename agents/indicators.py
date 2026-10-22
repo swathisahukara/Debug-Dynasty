@@ -14,13 +14,18 @@ def compute(rel, dep, dep_ages=None, young_days=90):
         prev = rel[i - 1] if i else None
         pub = r.get("publisher") or ""
         if pub and pub not in seen and prev and (r["t"] - prev["t"]).days > 180:
-            hits.append(dict(indicator="new_publisher_gap", version=r["version"], detail=f"publisher first seen after {(r['t'] - prev['t']).days} days without a release"))
+            earlier = set().union(*[x.get("maintainers") or set() for x in rel[:i]]) if i else set()
+            facts = {} if r.get("maintainers") is None else dict(publisher_listed_as_maintainer_on_this_release=pub in r["maintainers"], publisher_listed_as_maintainer_on_earlier_releases=pub in earlier)
+            hits.append(dict(indicator="new_publisher_gap", version=r["version"], facts=facts, detail=f"publisher first seen after {(r['t'] - prev['t']).days} days without a release"))
         if pub: seen.setdefault(pub, r["t"])
         win = [x for x in rel if 0 <= (x["t"] - r["t"]).total_seconds() <= 600]
         if len({line(x["version"]) for x in win}) >= 3 and (not prev or (r["t"] - prev["t"]).total_seconds() > 600):
-            hits.append(dict(indicator="release_burst", version=r["version"], detail=f"{len(win)} releases across {len({line(x['version']) for x in win})} release lines within 10 minutes"))
+            lines = {line(x["version"]) for x in win}; before = {line(x["version"]) for x in rel[:i]}
+            facts = dict(release_lines_in_burst=len(lines), lines_that_already_existed=len(lines & before), same_publisher_as_previous_release=bool(prev and prev.get("publisher") == pub),
+                         prerelease_versions=sum("-" in x["version"] for x in win))
+            hits.append(dict(indicator="release_burst", version=r["version"], facts=facts, detail=f"{len(win)} releases across {len({line(x['version']) for x in win})} release lines within 10 minutes"))
         if prev and r.get("install_scripts") and not prev.get("install_scripts"):
-            hits.append(dict(indicator="install_script_added", version=r["version"], detail=f"install-time script appears: {r['install_scripts']}"))
+            hits.append(dict(indicator="install_script_added", version=r["version"], facts=dict(script_type=r["install_scripts"], publisher_earlier_releases=sum(1 for x in rel[:i] if x.get("publisher") == pub)), detail=f"install-time script appears: {r['install_scripts']}"))
         if prev and "-" not in r["version"] and r["version"].split(".")[0] == prev["version"].split(".")[0]:
             new = deps[r["version"]] - deps[prev["version"]]
             if new and deps[r["version"]]:

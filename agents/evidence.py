@@ -28,6 +28,7 @@ def build(pkg, rel, dep, hits, window=25, max_hits=6):
         hid = f"H{n}"
         ht = next(r["t"] for r in rel if r["version"] == h["version"])
         item = dict(id=hid, indicator=h["indicator"], row=rowid[h["version"]], hours_before_T0=round((t0 - ht).total_seconds() / 3600, 1), detail=h["detail"])
+        if h.get("facts"): item["facts"] = h["facts"]
         if h.get("new_deps"):
             item["new_dependencies"] = [d_(x) for x in h["new_deps"]]
             item["new_dependency_package_age_days"] = h.get("dep_age_days")

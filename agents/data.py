@@ -37,6 +37,20 @@ def _csv_by_pkg(name):
     return _CSV[(name, str(C.DATA_DIR))]
 
 
+def _maintainers(pkg):
+    """version -> set of maintainer accounts listed on that release (empty dict if the table is unavailable)."""
+    try:
+        if C.DATA_SOURCE == "zetaris":
+            rows = _zetaris(f"SELECT version, maintainer FROM pkgtrail.maintainers_table WHERE package_name = '{pkg}'")
+        else:
+            rows = _csv_by_pkg("maintainers").get(pkg, [])
+    except (OSError, KeyError, FileNotFoundError, urllib.error.URLError):
+        return {}
+    out = {}
+    for r in rows: out.setdefault(r["version"], set()).add(r["maintainer"])
+    return out
+
+
 def fetch(pkg, as_of):
     """Returns (releases, dependencies) as lists of dicts, only rows published at or before as_of."""
     assert PKG_RE.match(pkg), "bad package name"
@@ -48,7 +62,10 @@ def fetch(pkg, as_of):
     else:
         rel = [dict(r) for r in _csv_by_pkg("releases").get(pkg, [])]
         dep = _csv_by_pkg("dependencies").get(pkg, [])
-    for r in rel: r["t"] = r.get("t") or _ts(r["published_at"])
+    mn = _maintainers(pkg)
+    for r in rel:
+        r["t"] = r.get("t") or _ts(r["published_at"])
+        r["maintainers"] = mn.get(r["version"])  # None = unknown
     rel = sorted([r for r in rel if r["t"] <= as_of], key=lambda r: r["t"])
     seen = {r["version"] for r in rel}
     return rel, [d for d in dep if d["version"] in seen]

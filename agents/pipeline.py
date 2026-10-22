@@ -8,10 +8,15 @@ STYLE = ("Do not write any reasoning. Output only the JSON object, as compact as
          "Names and dates are pseudonymized on purpose. Reply with one JSON object only, no prose.")
 
 
+LISTENERS = []  # callables receiving every log record (the UI streams them live)
+
+
 def log(event, **kw):
     LOG.parent.mkdir(exist_ok=True)
+    rec = dict(ts=datetime.now().isoformat(timespec="seconds"), event=event, **kw)
     with LOG.open("a") as f:
-        f.write(json.dumps(dict(ts=datetime.now().isoformat(timespec="seconds"), event=event, **kw), default=str) + "\n")
+        f.write(json.dumps(rec, default=str) + "\n")
+    for fn in list(LISTENERS): fn(json.loads(json.dumps(rec, default=str)))
 
 
 def pack(ev, extra=""):
@@ -52,6 +57,7 @@ def evaluate_report(out, ev):
 def loop(role, system, ev, task, checker, max_retries=2):
     feedback = ""
     for attempt in range(max_retries + 1):
+        log("agent_start", role=role, attempt=attempt)
         try:
             out, raw = llm.chat_json(role, system, pack(ev, task + feedback + "\n"))
         except RuntimeError as e:
@@ -81,13 +87,17 @@ def investigate(pkg, as_of, memory=None):
             mem_res, mem_ctx = memory.recall([h["indicator"] for h in hits])
             res["memory"] = [dict(id=r.memory.id, relevance=round(r.relevance, 3), content=r.memory.content) for r in mem_res.memories]
             log("hmem_recall", trace=mem_res.trace, recalled=[r.memory.id for r in mem_res.memories])
+        log("evidence", hits=ev["indicator_hits"])
         res["_mem_res"] = mem_res
         res["row_versions"] = {r["row"]: r["version"] for r in ev["releases"]}
         order = {"install_script_added": 0, "new_publisher_gap": 1, "release_burst": 2, "new_dependency": 3}
         plan = dict(focus=[h["id"] for h in sorted(ev["indicator_hits"], key=lambda h: (order[h["indicator"]], h["hours_before_T0"]))],
                     note="rule-based planner: install scripts and new publishers first, then newest")
         log("planner", plan=plan); a0 = 0
-        skep, a1 = loop("skeptic", STYLE, ev, mem_ctx + 'Skeptic: for EACH hit give the most plausible benign explanations from the data, then decide keep (true if the data still looks unusual). '
+        skep, a1 = loop("skeptic", STYLE, ev, mem_ctx + 'Skeptic: for EACH hit give the most plausible benign explanations from the data, then decide keep. Each hit carries deterministic "facts". Set keep=false ONLY when the facts show one of these documented benign patterns: '
+                        '(a) release_burst where lines_that_already_existed equals release_lines_in_burst and same_publisher_as_previous_release is true (a backport/patch sweep across existing lines); '
+                        '(b) new_publisher_gap where publisher_listed_as_maintainer_on_this_release is false (an automation/CI identity, not a newly added maintainer). '
+                        'For every other hit, or when facts are missing, keep=true. Name the pattern you applied in benign_explanations. '
                         'Return {"assessments":[{"hit":"H1","benign_explanations":[...],"keep":true,"citations":["R3"]}]}.', evaluate_skeptic)
         kept = [a for a in (skep or {}).get("assessments", []) if a.get("keep")]
         ev2 = dict(ev, skeptic_assessments=skep, planner=plan)
