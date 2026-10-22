@@ -18,6 +18,7 @@ def cases():
     for k in key: groups[(k["incident"], k["package"])].append(k)
     inc = []
     for (name, p), ks in groups.items():
+        if not all((k["package"], k["version"]) in when for k in ks): continue  # incident not fully present (the small SAMPLE_MODE dataset)
         inc.append(dict(id=f"inc:{p}:{name[:20]}", package=p, positive=True, as_of=min(when[(k["package"], k["version"])] for k in ks) + timedelta(hours=1),
                                               truth={(k["package"], k["version"]) for k in ks} | {x for x in PRECURSORS if x[0] == p}))
     inc.sort(key=lambda c: c["as_of"])
@@ -25,6 +26,7 @@ def cases():
     out = list(inc)
     for i, p in enumerate(controls):
         n = [when[(r["package"], r["version"])] for r in rel if r["package"] == p]
+        as_of = max(n)  # no incident cutoff available (SAMPLE_MODE): evaluate at the latest release
         for j in range(len(inc)):
             as_of = inc[(i + j) % len(inc)]["as_of"]
             if sum(t <= as_of for t in n) >= 5: break
