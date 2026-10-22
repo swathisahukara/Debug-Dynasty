@@ -22,5 +22,13 @@
   "llm_calls_per_case": 0.2,
   "est_usd_per_case": 0.00042,
   "seconds_per_case": 6.9
+ },
+ "agent_mem": {
+  "detection": "5/10",
+  "false_alarm": "1/30",
+  "evidence_precision": "11/11",
+  "llm_calls_per_case": 0.3,
+  "est_usd_per_case": 0.00054,
+  "seconds_per_case": 11.6
  }
 }
