@@ -1,0 +1,91 @@
+{
+ "grid": {
+  "packages": 39,
+  "dates": 116,
+  "cells": 4524,
+  "cells_with_recent_indicator": 50,
+  "control_cells": 3480
+ },
+ "rules_in_graph": 8,
+ "replay_paths": {
+  "no_indicator": 4474,
+  "rule": 50
+ },
+ "replay_false_alarms_on_control_cells": "35/3480",
+ "replay_llm_calls": 0,
+ "replay_est_usd": 0.0,
+ "unseen_combinations_flagged_for_review": 0,
+ "projected_usd": {
+  "single_shot_on_every_cell": 10.36,
+  "agent_loop_on_every_flagged_cell": 0.2231,
+  "compiled_replay": 0.0
+ },
+ "projected_llm_calls": {
+  "single_shot": 4524,
+  "agent_loop": 108,
+  "compiled_replay": 0
+ },
+ "leave_one_incident_out": [
+  {
+   "case": "inc:event-stream:event-stream flatmap",
+   "replay": "medium",
+   "path": "unseen_flagged_for_review",
+   "agent": "medium"
+  },
+  {
+   "case": "inc:ua-parser-js:ua-parser-js hijack",
+   "replay": "medium",
+   "path": "rule",
+   "agent": "medium"
+  },
+  {
+   "case": "inc:coa:coa hijack",
+   "replay": "medium",
+   "path": "rule",
+   "agent": "medium"
+  },
+  {
+   "case": "inc:rc:rc hijack",
+   "replay": "medium",
+   "path": "rule",
+   "agent": "medium"
+  },
+  {
+   "case": "inc:faker:faker sabotage",
+   "replay": "low",
+   "path": "no_indicator",
+   "agent": "low"
+  },
+  {
+   "case": "inc:colors:colors sabotage",
+   "replay": "low",
+   "path": "no_indicator",
+   "agent": "low"
+  },
+  {
+   "case": "inc:node-ipc:node-ipc protestware",
+   "replay": "low",
+   "path": "no_indicator",
+   "agent": "low"
+  },
+  {
+   "case": "inc:debug:chalk/debug npm comp",
+   "replay": "low",
+   "path": "no_indicator",
+   "agent": "low"
+  },
+  {
+   "case": "inc:chalk:chalk/debug npm comp",
+   "replay": "low",
+   "path": "no_indicator",
+   "agent": "low"
+  },
+  {
+   "case": "inc:node-ipc:node-ipc credential ",
+   "replay": "medium",
+   "path": "unseen_flagged_for_review",
+   "agent": "medium"
+  }
+ ],
+ "seconds": 5.1
+}

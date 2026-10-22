@@ -1,0 +1,139 @@
+{
+ "version": 1,
+ "params": {
+  "recent_days": 30,
+  "gap_days": 180,
+  "burst_window_s": 600,
+  "burst_lines": 3
+ },
+ "nodes": [
+  {
+   "id": "q_releases",
+   "type": "zetaris_query",
+   "sql": "SELECT package_name, version, published_at, publisher, install_scripts, dep_count, source FROM pkgtrail.releases_table WHERE package_name = :package AND published_at <= :as_of ORDER BY published_at"
+  },
+  {
+   "id": "q_dependencies",
+   "type": "zetaris_query",
+   "sql": "SELECT version, dependency FROM pkgtrail.dependencies_table WHERE package_name = :package"
+  },
+  {
+   "id": "i_new_publisher_gap",
+   "type": "indicator",
+   "impl": "new_publisher_gap",
+   "description": "publisher first seen after more than 180 days without a release",
+   "inputs": [
+    "q_releases",
+    "q_dependencies"
+   ]
+  },
+  {
+   "id": "i_release_burst",
+   "type": "indicator",
+   "impl": "release_burst",
+   "description": "3 or more release lines published within 10 minutes",
+   "inputs": [
+    "q_releases",
+    "q_dependencies"
+   ]
+  },
+  {
+   "id": "i_install_script_added",
+   "type": "indicator",
+   "impl": "install_script_added",
+   "description": "an install-time script appears that the previous release lacked",
+   "inputs": [
+    "q_releases",
+    "q_dependencies"
+   ]
+  },
+  {
+   "id": "i_new_dependency",
+   "type": "indicator",
+   "impl": "new_dependency",
+   "description": "new dependency in a same-major, non-prerelease release",
+   "inputs": [
+    "q_releases",
+    "q_dependencies"
+   ]
+  },
+  {
+   "id": "rules",
+   "type": "rule_table",
+   "inputs": [
+    "i_new_publisher_gap",
+    "i_release_burst",
+    "i_install_script_added",
+    "i_new_dependency"
+   ],
+   "default_if_no_indicator": "low",
+   "unseen": "llm_agent_loop_then_compile"
+  }
+ ],
+ "rules": [
+  {
+   "when": "install_script_added",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "A postinstall script appears transiently in version 1.13.5 at R24 and is absent in adjacent releases. The single temporary addition lacks corroborating changes but warrants noting.",
+   "source": "agent-loop:underscore"
+  },
+  {
+   "when": "install_script_added+release_burst",
+   "risk": "medium",
+   "support": 3,
+   "agreement": 1.0,
+   "rationale": "52 releases by one publisher, no dependencies. Simultaneous releases and new preinstall scripts at cutoff in R23, R24, R25 warrant monitoring.",
+   "source": "compiled from agent-loop runs"
+  },
+  {
+   "when": "new_dependency",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "acct-3 added dep-2 at R23, 41.3h before T0, after dep_count stayed at 1 since R8. It persisted through R25 with no install scripts.",
+   "source": "agent-loop:axios"
+  },
+  {
+   "when": "new_dependency+new_publisher_gap",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "A new publisher appeared after a 779-day hiatus and immediately released two versions, the latest adding a new dependency. This pattern warrants attention but may reflect legitimate maintainer transition.",
+   "source": "compiled from agent-loop runs"
+  },
+  {
+   "when": "new_dependency+release_burst",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "Nine releases across nine version lines appeared simultaneously at cutoff. Dependency dep-1 reappeared in 6.10.3 after a gap, warranting monitoring.",
+   "source": "agent-loop:qs"
+  },
+  {
+   "when": "new_publisher_gap",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "A new publisher appears after a 1440-day gap and immediately publishes numerous nightly builds. This pattern could indicate a maintainer change or automated CI/CD, but the long dormancy warrants attention.",
+   "source": "compiled from agent-loop runs"
+  },
+  {
+   "when": "new_publisher_gap+release_burst",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "New publisher acct-2 appears after a long gap and releases three lines at cutoff. No install scripts or new dependencies accompany these releases.",
+   "source": "compiled from agent-loop runs"
+  },
+  {
+   "when": "release_burst",
+   "risk": "medium",
+   "support": 1,
+   "agreement": 1.0,
+   "rationale": "Four releases across four version lines published simultaneously at cutoff. The coordinated burst lacks prior precedent but may reflect maintainer workflow.",
+   "source": "agent-loop:ws"
+  }
+ ]
+}
