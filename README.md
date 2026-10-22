@@ -5,6 +5,13 @@ Open Agent Hackathon 2026. Ask "is this open-source package still trustworthy?" 
 reasoning into an editable graph of federated queries and rules, then replays it across many
 packages and calls the LLM only on anomalies.
 
+## At a glance
+- **Track:** Reasoning Architecture (compile and replay). The agent loop runs once; its reasoning is compiled into an editable decision graph (`graphs/package_trail_graph.json`) that replays with 0 LLM calls.
+- **Result (40 cases: 10 incidents, 30 clean controls):** agent loop 5/10 detected, 1/30 false alarms, 11/11 cited rows real, about $0.0004 per case; single-shot LLM 5/10, 10/30 false alarms. Replay over 4,524 package-date cells: 0 LLM calls (single-shot would cost about $10). Limits are stated below.
+- **Try it (no keys):** `SAMPLE_MODE=1 LLM_MOCK=1 python3 -m app.server`, then open http://127.0.0.1:8765. With keys, drop the two variables. `LLM_MOCK=1` returns canned model replies for offline testing only; no reported number uses it.
+- **Sponsor tech:** Zetaris (data layer), Meterless (Nightshift endpoint and H-MEM engine), NVIDIA Nemotron, Cursor. See [docs/SPONSOR_TECH.md](docs/SPONSOR_TECH.md).
+- **Demo video:** [add link here] · script in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+
 ## Real vs synthetic data
 - **Real:** public npm registry metadata (per-version publish times, publishers, maintainers, dependencies, install scripts), fetched by `snapshot/fetch_packuments.py`.
 - **Synthetic:** the registry deletes malicious versions and keeps only their publish time. For 18 removed incident versions, `data/synthetic/release_overrides.csv` restores publisher, install-script and dependency content from public incident write-ups. `snapshot/build_dataset.py` merges these into `data/build/`, and every row carries `source = npm | synthetic`. Each override lists its basis and a confidence level.
@@ -14,7 +21,8 @@ packages and calls the LLM only on anomalies.
 Full snapshot goes to `data/raw/` (git-ignored). Copy `.env.example` to `.env` for live mode.
 
 ## Layout
-`snapshot/` data fetch, `data/` rows, `agents/` Planner/Retriever/Skeptic/Evaluator/Reporter, `eval/` scoring and baseline, `app/` UI.
+`snapshot/` data fetch, `data/` rows, `agents/` Planner/Retriever/Skeptic/Evaluator/Reporter, `eval/` scoring and baseline, `app/` UI (`python3 -m app.server`), `graphs/` compiled decision graph, `docs/` sponsor tech and demo script.
+
 
 ## Pre-existing work (declared)
 `smoke_test.py` (checks Zetaris, Nightshift, Nemotron connectivity) and setup notes were written before the build window opened. Everything else is built during the hackathon.
