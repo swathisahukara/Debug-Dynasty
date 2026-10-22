@@ -37,7 +37,7 @@ def make_handler(d):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default="data/raw")
+    ap.add_argument("--dir", default="data/build")
     ap.add_argument("--port", type=int, default=9000)
     a = ap.parse_args()
     print(f"serving {a.dir} on 0.0.0.0:{a.port}")

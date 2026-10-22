@@ -5,3 +5,5 @@ Icon*
 .DS_Store
 data/raw/
 *.pyc
+data/build/
+logs/

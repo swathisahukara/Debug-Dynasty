@@ -1,0 +1,2 @@
+dependency,first_published,confidence,basis
+flatmap-stream,2018-09-04T00:00:00Z,medium,Registry shows only the 2018-11-29 security placeholder created after the malicious package was removed. Public incident write-ups put the first flatmap-stream release days before event-stream 3.3.6 (2018-09-09). TODO verify the exact first-publish date.

@@ -29,7 +29,7 @@ def zetaris_sql():
 def nemotron():
     client = OpenAI(base_url=os.environ["METERLESS_BASE_URL"],
                     api_key=os.environ["METERLESS_RUNTIME_TOKEN"],
-                    default_headers={"meterless-app": "paper-trail", "meterless-scope": "user"})
+                    default_headers={"meterless-app": "package-trail", "meterless-scope": "user"})
     reply = client.chat.completions.create(
         model=os.environ["NEMOTRON_MODEL"],
         messages=[{"role": "user", "content": "Reply with the single word: ready"}])
