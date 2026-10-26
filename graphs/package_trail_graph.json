@@ -89,11 +89,11 @@
   },
   {
    "when": "new_dependency",
-   "risk": "medium",
+   "risk": "high",
    "support": 1,
    "agreement": 1.0,
    "rationale": "acct-3 added dep-2 at R23, 41.3h before T0, after dep_count stayed at 1 since R8. It persisted through R25 with no install scripts.",
-   "source": "agent-loop:axios"
+   "source": "edited in UI"
   },
   {
    "when": "new_dependency+new_publisher_gap",
