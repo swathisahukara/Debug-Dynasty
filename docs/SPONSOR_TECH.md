@@ -3,7 +3,7 @@
 ## Zetaris (data layer)
 - Release, maintainer and dependency rows are served as REST tables (`releases_src`, `maintainers_src`, `dependencies_src`) and exposed as SchemaStore views `pkgtrail.releases_table`, `pkgtrail.maintainers_table`, `pkgtrail.dependencies_table` (`snapshot/zetaris_setup.sql`).
 - The Retriever pulls a package's rows as of a cutoff through Lightning SQL over REST (`agents/data.py`, `POST /sql-editor/sqls/run`). Indicator queries are in `agents/sql/` (burst detection uses window functions because self-joins on REST-backed views are ambiguous).
-- `DATA_SOURCE=zetaris` is the default for live runs; the UI has a switch between Zetaris and local CSV, and the compiled graph's query nodes carry the same SQL.
+- `DATA_SOURCE=zetaris` is the default for live runs; the UI has a switch between Zetaris and local CSV, and the compiled graph's query nodes carry the same SQL. The fleet heatmap (every package x every date) and the live npm check run the same compiled graph with zero model calls.
 - Verify: `python3 snapshot/zetaris_sql.py -f snapshot/zetaris_verify.sql`, or switch the data source in the UI and replay a case.
 
 ## Meterless (two uses)

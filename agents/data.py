@@ -37,10 +37,10 @@ def _csv_by_pkg(name):
     return _CSV[(name, str(C.DATA_DIR))]
 
 
-def _maintainers(pkg):
+def _maintainers(pkg, source=None):
     """version -> set of maintainer accounts listed on that release (empty dict if the table is unavailable)."""
     try:
-        if C.DATA_SOURCE == "zetaris":
+        if (source or C.DATA_SOURCE) == "zetaris":
             rows = _zetaris(f"SELECT version, maintainer FROM pkgtrail.maintainers_table WHERE package_name = '{pkg}'")
         else:
             rows = _csv_by_pkg("maintainers").get(pkg, [])
@@ -51,10 +51,10 @@ def _maintainers(pkg):
     return out
 
 
-def fetch(pkg, as_of):
+def fetch(pkg, as_of, source=None):
     """Returns (releases, dependencies) as lists of dicts, only rows published at or before as_of."""
     assert PKG_RE.match(pkg), "bad package name"
-    if C.DATA_SOURCE == "zetaris":
+    if (source or C.DATA_SOURCE) == "zetaris":
         rel = _zetaris("SELECT package_name, version, published_at, publisher, install_scripts, dep_count, source FROM pkgtrail.releases_table "
                        f"WHERE package_name = '{pkg}' AND published_at <= TIMESTAMP '{as_of:%Y-%m-%d %H:%M:%S}' ORDER BY published_at")
         dep = _zetaris(f"SELECT version, dependency FROM pkgtrail.dependencies_table WHERE package_name = '{pkg}'")
@@ -62,7 +62,7 @@ def fetch(pkg, as_of):
     else:
         rel = [dict(r) for r in _csv_by_pkg("releases").get(pkg, [])]
         dep = _csv_by_pkg("dependencies").get(pkg, [])
-    mn = _maintainers(pkg)
+    mn = _maintainers(pkg, source)
     for r in rel:
         r["t"] = r.get("t") or _ts(r["published_at"])
         r["maintainers"] = mn.get(r["version"])  # None = unknown

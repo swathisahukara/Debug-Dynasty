@@ -1,6 +1,6 @@
 """Package Trail UI server (stdlib only). Run:  python3 -m app.server   then open http://127.0.0.1:8765
 Binds to localhost. Uses the same agents/ code as the CLI and eval; nothing here hardcodes an answer."""
-import csv, json, os, queue, sys, threading, traceback
+import csv, json, os, queue, sys, threading, time, traceback
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -47,6 +47,43 @@ def timeline(pkg, as_of, hits, rel):
                  source=r.get("source", ""), hit=hv.get(r["version"])) for r in shown]
 
 
+RATE = {}
+
+
+def rate_ok(ip, limit=12, window=60):
+    """Small in-memory limiter for live registry checks (protects the registry and the host)."""
+    now = time.time(); q = [t for t in RATE.get(ip, []) if now - t < window]
+    if len(q) >= limit: RATE[ip] = q; return False
+    RATE[ip] = q + [now]
+    if len(RATE) > 2000: RATE.clear()
+    return True
+
+
+def path_msg(r, live=False):
+    return {"no_indicator": "No indicator fired: low risk, no rule needed, 0 LLM calls",
+            "rule": f"Matched compiled rule \"{r.get('rule')}\": 0 LLM calls",
+            "unseen_flagged_for_review": f"Unseen indicator combination \"{r.get('rule')}\": flagged for review" + (" (live checks never call the agent)" if live else " (tick compile-on-miss to run the agent once and learn a rule)"),
+            "compiled_on_miss": f"Unseen combination \"{r.get('rule')}\": agent loop ran once and compiled a new rule"}[r["path"]]
+
+
+def live_check(pkg, as_of, emit):
+    """Any npm package, straight from registry.npmjs.org, through the same indicators and compiled graph. No LLM."""
+    from agents import live
+    emit("step", role="retriever", text=f"Fetching {pkg} from registry.npmjs.org (live)")
+    try: rel, dep, ages, as_of, meta = live.load(pkg, as_of)
+    except live.LiveError as e: return emit("error", text=str(e))
+    hits = indicators.recent(indicators.compute(rel, dep, dep_ages=ages), rel, as_of, C.RECENT_DAYS)
+    emit("timeline", rows=timeline(pkg, as_of, hits, rel), as_of=as_of.isoformat(timespec="minutes"))
+    emit("step", role="indicators", text=f"{meta['versions_used']} releases up to the cutoff ({meta['versions_on_registry']} on the registry), {len(hits)} indicator hit(s) in the last {C.RECENT_DAYS} days",
+         hits=[dict(indicator=h["indicator"], version=h["version"], detail=h["detail"], facts=h.get("facts")) for h in hits])
+    if ages: emit("step", role="dep ages", text=f"Looked up first-publish dates for {len(ages)} newly added dependencies")
+    r = CompiledGraph().replay_rows(pkg, rel, dep, as_of, dep_ages=ages)
+    emit("step", role="graph", text=path_msg(r, live=True))
+    emit("result", mode="replay", live=True, risk=r["risk"], path=r["path"], rule=r.get("rule"), summary=r.get("rationale") or path_msg(r, True), cited=r["cited"],
+         meter=dict(calls=0, est_usd=0.0, tokens_in=0, tokens_out=0), hits=len(hits), meta=meta,
+         note="Live registry data. Versions the registry removed keep only their publish time, so content-based indicators (install scripts, dependencies) cannot fire on them.")
+
+
 def replay(pkg, as_of, learn, emit):
     emit("step", role="retriever", text=f"Querying {C.DATA_SOURCE} for {pkg} up to the cutoff")
     rel, dep = data.fetch(pkg, as_of)
@@ -58,13 +95,47 @@ def replay(pkg, as_of, learn, emit):
     llm.reset_meter()
     r = g.replay(pkg, as_of, allow_llm=learn)
     if learn and r["path"] == "compiled_on_miss": g.save()
-    msg = {"no_indicator": "No indicator fired: low risk, no rule needed, 0 LLM calls",
-           "rule": f"Matched compiled rule \"{r.get('rule')}\": 0 LLM calls",
-           "unseen_flagged_for_review": f"Unseen indicator combination \"{r.get('rule')}\": flagged for review (tick compile-on-miss to run the agent once and learn a rule)",
-           "compiled_on_miss": f"Unseen combination \"{r.get('rule')}\": agent loop ran once and compiled a new rule"}[r["path"]]
+    msg = path_msg(r)
     emit("step", role="graph", text=msg)
     emit("result", mode="replay", risk=r["risk"], path=r["path"], rule=r.get("rule"), summary=r.get("rationale") or msg, cited=r["cited"],
          meter=dict(calls=r["llm_calls"], est_usd=r["est_usd"], tokens_in=0, tokens_out=0), hits=len(hits))
+
+
+_FLEET = {"key": None, "val": None}
+_FLEET_LOCK = threading.Lock()
+
+
+def fleet():
+    """Replay the compiled graph over every package x date cell (local CSV only, never Zetaris), cached until the graph file changes."""
+    from agents.compiled import GRAPH_PATH
+    key = GRAPH_PATH.stat().st_mtime if GRAPH_PATH.exists() else 0
+    with _FLEET_LOCK:
+        if _FLEET["key"] == key and _FLEET["val"]: return _FLEET["val"]
+        t0 = time.time(); g = CompiledGraph(); cs = case_list()
+        inc = {}
+        for c in cs:
+            if c["positive"]: inc.setdefault(c["package"], []).append(c["as_of"])
+        pkgs = sorted({c["package"] for c in cs}, key=lambda p: (p not in inc, p))
+        months = [datetime(y, m, 1) for y in range(2018, 2027) for m in range(1, 13) if (y, m) <= (2026, 10)]
+        dates = sorted(set(months) | {datetime.fromisoformat(c["as_of"]) for c in cs})
+        iso = [d.isoformat(timespec="minutes") for d in dates]
+        cells, flagged, incidents, counts = [], {}, {}, dict(cells=0, flagged=0, control_cells=0, control_flagged=0)
+        for pi, p in enumerate(pkgs):
+            row = []
+            for di, d in enumerate(dates):
+                rel, dep = data.fetch(p, d, source="csv")
+                if len(rel) < 5: row.append("0"); continue
+                r = g.replay_rows(p, rel, dep, d)
+                code = "1" if r["path"] == "no_indicator" else "3" if r["path"] == "unseen_flagged_for_review" else "2"
+                row.append(code); counts["cells"] += 1; counts["flagged"] += code != "1"
+                if p not in inc: counts["control_cells"] += 1; counts["control_flagged"] += code != "1"
+                if code != "1": flagged[f"{pi},{di}"] = dict(risk=r["risk"], rule=r.get("rule"))
+            cells.append("".join(row))
+            if p in inc: incidents[pi] = [iso.index(a) for a in inc[p] if a in iso]
+        val = dict(packages=[dict(name=p, incident=p in inc) for p in pkgs], dates=iso, cells=cells, flagged=flagged, incidents=incidents,
+                   stats=dict(counts, seconds=round(time.time() - t0, 2), llm_calls=0, rules=len(g.rules)))
+        _FLEET.update(key=key, val=val)
+        return val
 
 
 def agent(pkg, as_of, emit):
@@ -108,6 +179,9 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/", "/index.html"): return self.send(200, (ROOT / "app" / "index.html").read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/state": return self.send(200, state())
+        if self.path == "/api/fleet":
+            try: return self.send(200, fleet())
+            except Exception as e: traceback.print_exc(); return self.send(500, {"error": f"{type(e).__name__}: {e}"})
         self.send(404, {"error": "not found"})
 
     def do_POST(self):
@@ -126,13 +200,17 @@ class H(BaseHTTPRequestHandler):
         if self.path != "/api/investigate": return self.send(404, {"error": "not found"})
         pkg = str(b.get("package", "")).strip()
         if not data.PKG_RE.match(pkg): return self.send(400, {"error": "bad package name"})
-        try: as_of = datetime.fromisoformat(b["as_of"]) if b.get("as_of") else datetime(2100, 1, 1)
+        live_mode = bool(b.get("live"))
+        try: as_of = datetime.fromisoformat(b["as_of"]) if b.get("as_of") else (None if live_mode else datetime(2100, 1, 1))
         except ValueError: return self.send(400, {"error": "bad as_of"})
+        if live_mode and not rate_ok((self.headers.get("X-Forwarded-For") or self.client_address[0]).split(",")[0].strip()):
+            return self.send(429, {"error": "too many live checks, wait a minute"})
         self.send_response(200); self.send_header("Content-Type", "text/event-stream"); self.send_header("Cache-Control", "no-store"); self.end_headers()
         def emit(type_, **kw):
             self.wfile.write(("data: " + json.dumps(dict(type=type_, **kw), default=str) + "\n\n").encode()); self.wfile.flush()
         try:
-            if not data._csv_by_pkg("releases").get(pkg) and C.DATA_SOURCE == "csv": return emit("error", text=f"{pkg} is not in the local dataset (39 packages). Try one from the list.")
+            if live_mode: return live_check(pkg, as_of, emit)
+            if not data._csv_by_pkg("releases").get(pkg) and C.DATA_SOURCE == "csv": return emit("error", text=f"{pkg} is not in the local dataset (39 packages). Tick \"live from the npm registry\" to check any package.")
             replay(pkg, as_of, bool(b.get("learn")), emit) if b.get("mode") != "agent" else agent(pkg, as_of, emit)
         except (BrokenPipeError, ConnectionResetError): pass
         except Exception as e:
@@ -145,4 +223,5 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8765"))
     print(f"Package Trail UI on port {port}{' (PUBLIC read-only)' if PUBLIC else ''}  (data source: {C.DATA_SOURCE}, SAMPLE_MODE={int(C.SAMPLE_MODE)}, LLM_MOCK={int(C.LLM_MOCK)})")
     host = os.environ.get("HOST", "127.0.0.1")  # 0.0.0.0 on a host that sets PORT (Render, Fly)
+    threading.Thread(target=lambda: fleet(), daemon=True).start()  # warm the heatmap cache
     ThreadingHTTPServer((host, port), H).serve_forever()

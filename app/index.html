@@ -75,6 +75,7 @@ td.n{font-family:var(--mono)}
 </header>
 <nav>
   <button data-tab="inv" class="on">Investigate</button>
+  <button data-tab="fleet">Fleet heatmap</button>
   <button data-tab="graph">Compiled graph</button>
   <button data-tab="score">Scoreboard</button>
 </nav>
@@ -85,8 +86,9 @@ td.n{font-family:var(--mono)}
     <div class="card">
       <h2>Question</h2>
       <label>Package</label>
-      <input type="text" id="pkg" list="pkgs" placeholder="e.g. ua-parser-js" autocomplete="off">
+      <input type="text" id="pkg" list="pkgs" placeholder="any npm package, e.g. lodash" autocomplete="off">
       <datalist id="pkgs"></datalist>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:8px;color:var(--text)"><input type="checkbox" id="live"> Live from the npm registry (any package; blank cutoff = now)</label>
       <label>Evaluate as of (UTC cutoff; blank = latest data)</label>
       <input type="datetime-local" id="asof">
       <label>Demo cases (answer key, fixed cutoffs)</label>
@@ -125,6 +127,16 @@ td.n{font-family:var(--mono)}
   </div>
 </section>
 
+<section id="tab-fleet" class="hidden">
+  <div class="card">
+    <h2>Every package at every date, replayed from the compiled graph</h2>
+    <p class="note" id="flstats" style="font-size:13px;color:var(--text);margin:0 0 12px">Loading...</p>
+    <div id="fl" style="overflow-x:auto"></div>
+    <div class="legend"><span><i style="background:var(--low);opacity:.35"></i>replayed, no indicator</span><span><i style="background:var(--med)"></i>flagged by a compiled rule</span><span><i style="background:var(--high)"></i>unseen combination, flagged for review</span><span><i style="background:none;border:2px solid var(--accent)"></i>known incident cutoff</span></div>
+    <p class="note">Click any cell to investigate that package at that date. Rows above the line are the incident packages; rows below are clean controls, so every amber cell below the line is a false alarm.</p>
+  </div>
+</section>
+
 <section id="tab-graph" class="hidden">
   <div class="card">
     <h2>Decision graph compiled from agent runs (editable JSON: graphs/package_trail_graph.json)</h2>
@@ -152,7 +164,8 @@ const SINGLE_PER_CASE=()=>ST?.scoreboard?.single?.est_usd_per_case||0.00191;
 
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
-  ["inv","graph","score"].forEach(t=>$("#tab-"+t).classList.toggle("hidden",t!==b.dataset.tab));
+  ["inv","fleet","graph","score"].forEach(t=>$("#tab-"+t).classList.toggle("hidden",t!==b.dataset.tab));
+  if(b.dataset.tab==="fleet")loadFleet();
 });
 
 async function load(){
@@ -164,13 +177,13 @@ async function load(){
   if(m.public){
     document.querySelector("input[value=agent]").closest("label").style.display="none";
     $("#learn").closest("label").style.display="none"; $("#source").previousElementSibling.style.display="none"; $("#source").style.display="none";
-    $("#badges").insertAdjacentHTML("beforeend",`<span class="badge on">public demo: replay only</span>`);
+    $("#badges").innerHTML=`<span class="badge on">public demo: replay only</span><span class="badge">data: CSV snapshot of the Zetaris tables</span>`;
     $("#pubnote").classList.remove("hidden");
   }
   const pk=[...new Set(ST.cases.map(c=>c.package))]; $("#pkgs").innerHTML=pk.map(p=>`<option value="${esc(p)}">`).join("");
   $("#presets").innerHTML=ST.cases.filter(c=>c.positive).map((c,i)=>`<span class="chip bad" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)} <small style="color:var(--muted)">${esc(c.as_of.slice(0,4))}</small></span>`).join("")
     +ST.cases.filter(c=>!c.positive).slice(0,4).map(c=>`<span class="chip ok" data-i="${ST.cases.indexOf(c)}" title="${esc(c.label)}">${esc(c.package)}</span>`).join("");
-  document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{const c=ST.cases[ch.dataset.i];$("#pkg").value=c.package;$("#asof").value=c.as_of;});
+  document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{const c=ST.cases[ch.dataset.i];$("#pkg").value=c.package;$("#asof").value=c.as_of;$("#live").checked=false;});
   renderGraph(ST.graph); renderScore();
 }
 
@@ -200,6 +213,43 @@ function renderScore(){
     b("Single-shot LLM on every cell",r.projected_usd.single_shot_on_every_cell)+b("Agent loop on every flagged cell",r.projected_usd.agent_loop_on_every_flagged_cell)+b("Compiled replay",r.projected_usd.compiled_replay)+
     `<table style="margin-top:14px"><tr><th>Held out incident (rule compiled without it)</th><th>Replay</th><th>Path</th><th>Agent</th></tr>`+
     r.leave_one_incident_out.map(x=>`<tr><td>${esc(x.case)}</td><td class="n">${x.replay}</td><td class="n">${x.path}</td><td class="n">${x.agent}</td></tr>`).join("")+`</table>`;
+}
+
+let REQ={},LAST=null;
+function permalink(){const q=new URLSearchParams({pkg:LAST.pkg});if(LAST.asof)q.set("asof",LAST.asof);if(LAST.live)q.set("live","1");return location.origin+location.pathname+"#"+q;}
+function reportMd(){const e=LAST.ev;return [`# Package Trail: ${LAST.pkg}`,"",`**${String(e.risk).toUpperCase()} risk indicators** (${e.live?"live npm registry":"snapshot"}, as of ${LAST.asof||"now"} UTC)`,"",e.summary||"",
+  "",...(e.indicators||[]).map(i=>`- ${i.hit}: ${i.why} (rows ${(i.rows||[]).join(", ")})`),...(e.cited||[]).map(c=>`- cited: ${c.indicator} at ${c.row}`),"",
+  `Path: ${e.path||e.mode}${e.rule?" · rule: "+e.rule:""} · LLM calls: ${(e.meter||{}).calls||0}`,"","_Risk indicators are signals, not accusations, and not a malware verdict._",permalink()].join("\n");}
+async function copyText(text,btn){try{await navigator.clipboard.writeText(text);}catch(err){const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();}
+  const o=btn.textContent;btn.textContent="Copied";setTimeout(()=>{btn.textContent=o;},1200);}
+function applyHash(){const h=new URLSearchParams(location.hash.slice(1));if(!h.get("pkg"))return;
+  $("#pkg").value=h.get("pkg");$("#asof").value=h.get("asof")||"";$("#live").checked=h.get("live")==="1";document.querySelector("input[value=replay]").click();$("#go").click();}
+let FLEET=null;
+async function loadFleet(){
+  if(FLEET)return;
+  try{FLEET=await (await fetch("/api/fleet")).json();}catch(e){$("#flstats").textContent="Could not load the grid: "+e;return;}
+  const d=FLEET, st=d.stats, cw=8, ch=15, lw=130, top=30, W=lw+d.dates.length*cw+8, H=top+d.packages.length*ch+10;
+  $("#flstats").innerHTML=`<b>${st.cells.toLocaleString()}</b> package-date cells replayed in <b>${st.seconds}s</b> with <b>${st.llm_calls} LLM calls</b> · ${st.flagged} flagged · ${st.control_flagged} of ${st.control_cells.toLocaleString()} control cells (${(100*st.control_flagged/st.control_cells).toFixed(1)}%) are false alarms`;
+  const inc=new Set(Object.keys(d.incidents).flatMap(pi=>d.incidents[pi].map(di=>pi+","+di)));
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Fleet heatmap of replayed verdicts">`;
+  d.dates.forEach((t,di)=>{if(t.slice(5)==="01-01T00:00")svg+=`<text x="${lw+di*cw}" y="${top-12}">${t.slice(0,4)}</text><line x1="${lw+di*cw}" x2="${lw+di*cw}" y1="${top-6}" y2="${H-8}" stroke="var(--line)"/>`;});
+  let lastInc=-1;
+  d.packages.forEach((p,pi)=>{
+    if(p.incident)lastInc=pi;
+    svg+=`<text x="${lw-8}" y="${top+pi*ch+11}" text-anchor="end" style="${p.incident?"fill:var(--text);font-weight:700":""}">${esc(p.name)}</text>`;
+    for(let di=0;di<d.dates.length;di++){
+      const c=d.cells[pi][di]; if(c==="0")continue;
+      const fl=d.flagged[pi+","+di], fill=c==="1"?"var(--low)":c==="2"?"var(--med)":"var(--high)", op=c==="1"?.22:1, isInc=inc.has(pi+","+di);
+      const tip=`${p.name} · ${d.dates[di].replace("T"," ")} UTC · `+(c==="1"?"no indicator":`${fl.risk} (${fl.rule})`)+(isInc?" · known incident cutoff":"");
+      svg+=`<rect data-pi="${pi}" data-di="${di}" x="${lw+di*cw}" y="${top+pi*ch}" width="${cw-1}" height="${ch-2}" rx="1.5" fill="${fill}" fill-opacity="${op}" ${isInc?'stroke="var(--accent)" stroke-width="2"':""} style="cursor:pointer"><title>${esc(tip)}</title></rect>`;
+    }
+  });
+  svg+=`<line x1="0" x2="${W}" y1="${top+(lastInc+1)*ch-1}" y2="${top+(lastInc+1)*ch-1}" stroke="var(--muted)" stroke-dasharray="4 3"/></svg>`;
+  $("#fl").innerHTML=svg;
+  $("#fl").onclick=e=>{const r=e.target.closest("rect");if(!r)return;
+    document.querySelector('nav button[data-tab=inv]').click();
+    $("#pkg").value=d.packages[r.dataset.pi].name;$("#asof").value=d.dates[r.dataset.di];$("#live").checked=false;
+    document.querySelector("input[value=replay]").click();$("#go").click();};
 }
 
 function timeline(rows,asOf){
@@ -234,9 +284,10 @@ function logLine(rec){
 $("#go").onclick=async()=>{
   const pkg=$("#pkg").value.trim(); if(!pkg)return;
   const mode=document.querySelector("input[name=mode]:checked").value;
+  REQ={pkg,asof:$("#asof").value,live:$("#live").checked,mode};
   $("#go").disabled=true; $("#feed").innerHTML=""; $("#tl").textContent="Loading..."; $("#verdict").innerHTML=`<span class="note">Running ${mode==="agent"?"agent loop (about 10 to 90 s on Nemotron)":"replay"}...</span>`;
   try{
-    const resp=await fetch("/api/investigate",{method:"POST",body:JSON.stringify({package:pkg,as_of:$("#asof").value,mode,learn:$("#learn").checked})});
+    const resp=await fetch("/api/investigate",{method:"POST",body:JSON.stringify({package:pkg,as_of:$("#asof").value,mode,learn:$("#learn").checked,live:$("#live").checked})});
     if(!resp.ok){$("#verdict").textContent=(await resp.json()).error;return;}
     const rd=resp.body.getReader(),dec=new TextDecoder();let buf="";
     for(;;){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
@@ -256,12 +307,18 @@ function handle(ev){
     $("#mCalls").textContent=m.calls||0;$("#mUsd").textContent="$"+(m.est_usd||0).toFixed(5);$("#mSess").textContent="$"+session.toFixed(5);
     $("#mSave").textContent=!(m.calls)?"free (0 calls)":(m.est_usd||0)<ref?`${Math.round((1-(m.est_usd||0)/ref)*100)}% cheaper`:"–";
     const ind=(ev.indicators||[]).map(i=>`<li><b>${esc(i.hit)}</b> ${esc(i.why)} <span class="cited">${(i.rows||[]).map(r=>`<span>${esc(r)}${ev.row_versions&&ev.row_versions[r]?" → v"+esc(ev.row_versions[r]):""}</span>`).join("")}</span></li>`).join("");
-    $("#verdict").innerHTML=`<div class="verdict"><span class="pill ${esc(ev.risk)}">${esc(ev.risk)} risk indicators</span><span class="note" style="margin:0">${esc(ev.mode==="replay"?"path: "+ev.path+(ev.rule?" · rule: "+ev.rule:""):`agent loop · ${ev.retries} evaluator retries · skeptic kept ${ev.kept??0}/${ev.hits} · ${ev.wall_s}s`)}</span></div>
+    $("#verdict").innerHTML=`<div class="verdict"><span class="pill ${esc(ev.risk)}">${esc(ev.risk)} risk indicators</span><span class="note" style="margin:0">${esc(ev.mode==="replay"?(ev.live?"live registry · ":"")+"path: "+ev.path+(ev.rule?" · rule: "+ev.rule:""):`agent loop · ${ev.retries} evaluator retries · skeptic kept ${ev.kept??0}/${ev.hits} · ${ev.wall_s}s`)}</span></div>
       <p style="margin:12px 0 6px">${esc(ev.summary||"")}</p>${ind?`<ul style="margin:6px 0 10px;padding-left:18px">${ind}</ul>`:""}
-      <div class="cited">${(ev.cited||[]).map(c=>`<span>${esc(c.indicator)} · ${esc(c.row)}</span>`).join("")||"no cited rows (no indicator fired)"}</div>`;
+      ${ev.meta?`<p class="note">${esc(ev.meta.versions_on_registry)} versions on the registry · latest ${esc(ev.meta.latest)} · last release ${esc(ev.meta.last_release)} UTC</p>`:""}${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}
+      <div class="cited">${(ev.cited||[]).map(c=>`<span>${esc(c.indicator)} · ${esc(c.row)}</span>`).join("")||"no cited rows (no indicator fired)"}</div>
+      <div style="display:flex;gap:8px;margin-top:12px"><span class="chip" id="copyLink">Copy link</span><span class="chip" id="copyRep">Copy report</span></div>`;
+    LAST=Object.assign({},REQ,{ev});
+    $("#copyLink").onclick=e=>copyText(permalink(),e.target);$("#copyRep").onclick=e=>copyText(reportMd(),e.target);
+    if(ev.mode==="replay"||ev.live)history.replaceState(null,"",permalink());
   }
 }
-load();
+$("#pkg").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click();});
+load().then(applyHash);
 </script>
 </body>
 </html>

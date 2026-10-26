@@ -45,7 +45,11 @@ class CompiledGraph:
     # ---- replay
     def replay(self, pkg, as_of, allow_llm=False, memory=None):
         rel, dep = data.fetch(pkg, as_of)
-        hits = indicators.recent(indicators.compute(rel, dep), rel, as_of, self.params["recent_days"])
+        return self.replay_rows(pkg, rel, dep, as_of, allow_llm=allow_llm, memory=memory)
+
+    def replay_rows(self, pkg, rel, dep, as_of, dep_ages=None, allow_llm=False, memory=None):
+        """Replay on rows already in hand (the live registry path). allow_llm needs the snapshot data, so live callers leave it off."""
+        hits = indicators.recent(indicators.compute(rel, dep, dep_ages=dep_ages), rel, as_of, self.params["recent_days"])
         out = dict(package=pkg, as_of=str(as_of), llm_calls=0, est_usd=0.0, cited=[dict(indicator=h["indicator"], row=f"{pkg}@{h['version']}") for h in hits])
         if not hits: return dict(out, risk="low", path="no_indicator")
         k = key(hits); rule = self.rules.get(k)
