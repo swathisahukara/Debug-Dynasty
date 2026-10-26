@@ -291,6 +291,7 @@ async function loadFleet(){
   try{FLEET=await (await fetch("/api/fleet")).json();}catch(e){$("#flstats").textContent="Could not load the grid: "+e;return;}
   const d=FLEET, st=d.stats, cw=8, ch=15, lw=130, top=30, W=lw+d.dates.length*cw+8, H=top+d.packages.length*ch+10;
   $("#flstats").innerHTML=`<div class="fig"><b>${st.cells.toLocaleString()}</b><span>package-date cells replayed</span></div><div class="fig"><b>${st.seconds}s</b><span>${st.llm_calls} LLM calls</span></div><div class="fig"><b>${st.flagged}</b><span>cells flagged by a compiled rule or sent for review</span></div><div class="fig"><b>${(100*st.control_flagged/st.control_cells).toFixed(1)}%</b><span>false alarms on controls (${st.control_flagged} of ${st.control_cells.toLocaleString()})</span></div>`;
+  if(d.precomputed)$("#flstats").insertAdjacentHTML("afterend",`<p class="note" style="margin:-10px 0 18px">Precomputed from the same compiled graph (verified by hash) because this free host has a slow shared CPU. Run the app locally to recompute the whole grid live in about 5 s.</p>`);
   const inc=new Set(Object.keys(d.incidents).flatMap(pi=>d.incidents[pi].map(di=>pi+","+di)));
   let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Fleet heatmap of replayed verdicts">`;
   d.dates.forEach((t,di)=>{if(t.slice(5)==="01-01T00:00")svg+=`<text x="${lw+di*cw}" y="${top-12}">${t.slice(0,4)}</text><line x1="${lw+di*cw}" x2="${lw+di*cw}" y1="${top-6}" y2="${H-8}" stroke="var(--line)"/>`;});
@@ -322,6 +323,7 @@ function timeline(rows,asOf){
     s+=`<circle class="${cls}" cx="${x}" cy="${base}" r="${hit?6:3.5}"><title>${esc(r.version)} · ${esc(r.t)} · ${esc(r.publisher)}${r.scripts?" · "+esc(r.scripts):""}${hit?" · "+esc(r.hit):""}</title></circle>`;
     if(hit)s+=`<text x="${x}" y="${dn?base+42:base-33}" text-anchor="${i>rows.length-4?"end":"middle"}">${esc(r.version)} ${esc(r.hit.replace(/_/g," "))}</text>`;});
   $("#tl").innerHTML=s+`<text class="cut" x="${W-pad}" y="${H-3}" text-anchor="end">cutoff ${esc(asOf)}</text></svg>`;
+  $("#tl").scrollLeft=1e6;  // narrow screens: start at the newest releases, where the indicator hits are
 }
 
 function feed(cls,role,text,sub){const d=document.createElement("div");d.className="step "+cls;d.innerHTML=`<span class="r">${esc(role)}</span>${esc(text)}${sub?`<small>${esc(sub)}</small>`:""}`;$("#feed").appendChild(d);$("#feed").scrollTop=1e9;return d;}

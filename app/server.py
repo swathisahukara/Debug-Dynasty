@@ -105,12 +105,27 @@ _FLEET = {"key": None, "val": None}
 _FLEET_LOCK = threading.Lock()
 
 
+PRECOMPUTED = ROOT / "data/public/fleet.json"
+
+
+def _graph_sha():
+    import hashlib
+    from agents.compiled import GRAPH_PATH
+    return hashlib.sha256(GRAPH_PATH.read_bytes()).hexdigest()
+
+
 def fleet():
     """Replay the compiled graph over every package x date cell (local CSV only, never Zetaris), cached until the graph file changes."""
     from agents.compiled import GRAPH_PATH
     key = GRAPH_PATH.stat().st_mtime if GRAPH_PATH.exists() else 0
     with _FLEET_LOCK:
         if _FLEET["key"] == key and _FLEET["val"]: return _FLEET["val"]
+        if PUBLIC and PRECOMPUTED.exists():  # slow shared CPU on the free host: serve the grid computed by this same graph, verified by hash
+            try:
+                pre = json.loads(PRECOMPUTED.read_text())
+                if pre.get("graph_sha") == _graph_sha():
+                    pre["precomputed"] = True; _FLEET.update(key=key, val=pre); return pre
+            except (OSError, ValueError): pass
         t0 = time.time(); g = CompiledGraph(); cs = case_list()
         inc = {}
         for c in cs:
@@ -134,6 +149,7 @@ def fleet():
             if p in inc: incidents[pi] = [iso.index(a) for a in inc[p] if a in iso]
         val = dict(packages=[dict(name=p, incident=p in inc) for p in pkgs], dates=iso, cells=cells, flagged=flagged, incidents=incidents,
                    stats=dict(counts, seconds=round(time.time() - t0, 2), llm_calls=0, rules=len(g.rules)))
+        val["graph_sha"] = _graph_sha()
         _FLEET.update(key=key, val=val)
         return val
 
@@ -220,6 +236,9 @@ class H(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    if "--build-fleet" in sys.argv:  # DATA_DIR=data/public python3 -m app.server --build-fleet
+        v = fleet(); PRECOMPUTED.write_text(json.dumps(v, separators=(",", ":")))
+        print(f"wrote {PRECOMPUTED} ({v['stats']['cells']} cells in {v['stats']['seconds']} s, {v['stats']['llm_calls']} LLM calls)"); sys.exit(0)
     port = int(os.environ.get("PORT", "8765"))
     print(f"Package Trail UI on port {port}{' (PUBLIC read-only)' if PUBLIC else ''}  (data source: {C.DATA_SOURCE}, SAMPLE_MODE={int(C.SAMPLE_MODE)}, LLM_MOCK={int(C.LLM_MOCK)})")
     host = os.environ.get("HOST", "127.0.0.1")  # 0.0.0.0 on a host that sets PORT (Render, Fly)

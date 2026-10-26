@@ -59,6 +59,11 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(len(d["cells"]), len(d["packages"])); self.assertTrue(all(len(r) == len(d["dates"]) for r in d["cells"]))
         self.assertEqual(d["stats"]["llm_calls"], 0); self.assertGreater(d["stats"]["cells"], 0)
 
+    def test_precomputed_public_grid_matches_current_graph(self):
+        pre = json.loads(server.PRECOMPUTED.read_text())
+        self.assertEqual(pre["graph_sha"], server._graph_sha(), "graph changed: run DATA_DIR=data/public python3 -m app.server --build-fleet")
+        self.assertEqual(pre["stats"]["llm_calls"], 0)
+
     def test_rate_limiter(self):
         server.RATE.clear()
         self.assertTrue(all(server.rate_ok("1.2.3.4", limit=3) for _ in range(3)))
