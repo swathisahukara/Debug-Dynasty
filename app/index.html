@@ -372,12 +372,13 @@ function handle(ev){
     $("#mSave").textContent=!(m.calls)?"free (0 calls)":(m.est_usd||0)<ref?`${Math.round((1-(m.est_usd||0)/ref)*100)}% cheaper`:"–";
     const ind=(ev.indicators||[]).map(i=>`<li><b>${esc(i.hit)}</b> ${esc(i.why)} <div class="cited">${(i.rows||[]).map(r=>`<span>${esc(r)}${ev.row_versions&&ev.row_versions[r]?" → v"+esc(ev.row_versions[r]):""}</span>`).join("")}</div></li>`).join("");
     const rk=["low","medium","high"].includes(ev.risk)?ev.risk:"review", head={low:"Low risk",medium:"Medium risk",high:"High risk",review:"Flagged for review"}[rk];
-    const how=ev.mode==="replay"?(ev.live?"live registry · ":"")+"path: "+ev.path+(ev.rule?" · rule: "+ev.rule:""):`agent loop · ${ev.retries} evaluator retries · skeptic kept ${ev.kept??0}/${ev.hits} · ${ev.wall_s}s`;
+    const how=ev.mode==="replay"?(ev.live?"live registry · ":"")+"path: "+ev.path+(ev.rule?" · rule: "+ev.rule:""):(ev.path==="cheap"?`agent loop · no model call: no indicator fired at this cutoff · ${ev.wall_s}s`:`agent loop · ${ev.retries} evaluator retries · skeptic kept ${ev.kept??0}/${ev.hits} · ${ev.wall_s}s`);
+    if(ev.mode==="agent"&&ev.path==="cheap")feed("","agent","no model call: no indicator fired at this cutoff (cheap path)");
     $("#verdictCard").dataset.risk=rk;
     $("#verdict").className="";
     $("#verdict").innerHTML=`<div class="vh"><span class="dot"></span><h3>${head}</h3></div><p class="vpath">${esc(how)}</p>
       <p class="vsum">${esc(ev.summary||"")}</p>${ind?`<ul class="ev">${ind}</ul>`:""}
-      ${ev.meta?`<p class="note">${esc(ev.meta.versions_on_registry)} versions on the registry · latest ${esc(ev.meta.latest)} · last release ${esc(ev.meta.last_release)} UTC</p>`:""}${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}
+      ${ev.meta?`<p class="note">${esc(ev.meta.versions_on_registry)} versions on the registry · latest ${esc(ev.meta.latest)} · last release ${esc(ev.meta.last_release)} UTC</p>`:""}${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}${ev.mode==="agent"&&ev.path==="cheap"?`<p class="note">No indicator fired for this package at this cutoff, so there was nothing for the agent to investigate and no model call was made. To see live Nemotron calls, pick a red-dot known case (an incident cutoff) and run the agent loop again.</p>`:""}
       ${ind?"":`<div class="cited">${(ev.cited||[]).map(c=>`<span>${esc(c.indicator)} · ${esc(c.row)}</span>`).join("")||"no cited rows (no indicator fired)"}</div>`}
       <div class="actions"><button type="button" class="chip" id="copyLink">Copy link</button><button type="button" class="chip" id="copyRep">Copy report</button></div>`;
     LAST=Object.assign({},REQ,{ev});
