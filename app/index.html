@@ -319,6 +319,7 @@ function handle(ev){
 }
 $("#pkg").addEventListener("keydown",e=>{if(e.key==="Enter")$("#go").click();});
 load().then(applyHash);
+addEventListener("hashchange",()=>{const b=[...document.querySelectorAll("button")].find(x=>x.textContent.trim()==="Investigate"&&x.closest("nav,.tabs"));if(b)b.click();applyHash();});
 </script>
 </body>
 </html>
