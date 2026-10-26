@@ -1,0 +1,683 @@
+{
+ "package": "coa",
+ "as_of": "2021-11-04T14:02",
+ "recorded_at": "2026-10-26T10:34:19+00:00",
+ "source": "zetaris",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "wall_s": 100.0,
+ "calls": 2,
+ "events": [
+  {
+   "t": 1.74,
+   "type": "timeline",
+   "data": {
+    "rows": [
+     {
+      "version": "0.0.1",
+      "t": "2011-07-19T22:07",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.0.2",
+      "t": "2011-07-19T23:51",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.0.4",
+      "t": "2011-08-27T23:44",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.0.5",
+      "t": "2011-08-31T00:11",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.0.6",
+      "t": "2011-09-17T20:48",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.1.0",
+      "t": "2011-09-27T10:21",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.1.1",
+      "t": "2011-09-29T21:43",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.2.0",
+      "t": "2011-10-28T14:54",
+      "publisher": "veged",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.2.1",
+      "t": "2011-11-09T15:25",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.0",
+      "t": "2011-11-11T15:25",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.1",
+      "t": "2011-11-11T19:29",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.2",
+      "t": "2011-12-21T19:53",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.3",
+      "t": "2012-01-31T11:01",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.4",
+      "t": "2012-02-12T18:45",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.5",
+      "t": "2012-06-12T20:43",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.6",
+      "t": "2012-10-03T21:24",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.7",
+      "t": "2012-10-19T22:20",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.8",
+      "t": "2012-11-07T13:07",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.3.9",
+      "t": "2012-12-02T23:09",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.4.0",
+      "t": "2013-07-10T13:46",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.4.1",
+      "t": "2014-05-27T08:56",
+      "publisher": "arikon",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "1.0.0",
+      "t": "2015-02-17T09:49",
+      "publisher": "veged",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "1.0.1",
+      "t": "2015-03-30T10:53",
+      "publisher": "veged",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "1.0.2",
+      "t": "2017-05-23T11:17",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "1.0.3",
+      "t": "2017-06-10T20:08",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "1.0.4",
+      "t": "2017-07-07T20:24",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.0.0",
+      "t": "2017-07-07T20:26",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.0.1",
+      "t": "2018-01-10T20:45",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.0.2",
+      "t": "2018-12-11T01:33",
+      "publisher": "qfox",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.0.3",
+      "t": "2021-11-04T13:02",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": "install_script_added"
+     },
+     {
+      "version": "2.1.3",
+      "t": "2021-11-04T13:02",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     },
+     {
+      "version": "3.1.3",
+      "t": "2021-11-04T13:03",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     },
+     {
+      "version": "2.0.4",
+      "t": "2021-11-04T13:46",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": "release_burst"
+     },
+     {
+      "version": "2.1.1",
+      "t": "2021-11-04T13:47",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     },
+     {
+      "version": "3.0.1",
+      "t": "2021-11-04T13:48",
+      "publisher": "qfox",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     }
+    ],
+    "as_of": "2021-11-04T14:02"
+   }
+  },
+  {
+   "t": 1.74,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:40",
+     "event": "retriever",
+     "package": "coa",
+     "as_of": "2021-11-04 14:02:00",
+     "releases": 35,
+     "hits": [
+      [
+       "release_burst",
+       "2.0.3"
+      ],
+      [
+       "install_script_added",
+       "2.0.3"
+      ],
+      [
+       "release_burst",
+       "2.0.4"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "t": 1.74,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:40",
+     "event": "evidence",
+     "hits": [
+      {
+       "id": "H1",
+       "indicator": "release_burst",
+       "row": "R23",
+       "hours_before_T0": 0.0,
+       "detail": "3 releases across 3 release lines within 10 minutes",
+       "facts": {
+        "release_lines_in_burst": 3,
+        "lines_that_already_existed": 2,
+        "same_publisher_as_previous_release": true,
+        "prerelease_versions": 0
+       }
+      },
+      {
+       "id": "H2",
+       "indicator": "release_burst",
+       "row": "R20",
+       "hours_before_T0": 0.8,
+       "detail": "3 releases across 3 release lines within 10 minutes",
+       "facts": {
+        "release_lines_in_burst": 3,
+        "lines_that_already_existed": 1,
+        "same_publisher_as_previous_release": true,
+        "prerelease_versions": 0
+       }
+      },
+      {
+       "id": "H3",
+       "indicator": "install_script_added",
+       "row": "R20",
+       "hours_before_T0": 0.8,
+       "detail": "install-time script appears: preinstall",
+       "facts": {
+        "script_type": "preinstall",
+        "publisher_earlier_releases": 6
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 1.74,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:40",
+     "event": "planner",
+     "plan": {
+      "focus": [
+       "H3",
+       "H1",
+       "H2"
+      ],
+      "note": "rule-based planner: install scripts and new publishers first, then newest"
+     }
+    }
+   }
+  },
+  {
+   "t": 1.74,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:40",
+     "event": "agent_start",
+     "role": "skeptic",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 32.47,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:03:12",
+     "event": "agent",
+     "role": "skeptic",
+     "attempt": 0,
+     "errors": [],
+     "output": {
+      "assessments": [
+       {
+        "hit": "H1",
+        "benign_explanations": [
+         "Not a backport/patch sweep (pattern a) because existing lines (2) < burst (3). Same publisher release burst is common."
+        ],
+        "keep": true,
+        "citations": [
+         "R23"
+        ]
+       },
+       {
+        "hit": "H2",
+        "benign_explanations": [
+         "Not a backport/patch sweep (pattern a) because existing lines (1) < burst (3). Same publisher multi-line release is normal."
+        ],
+        "keep": true,
+        "citations": [
+         "R20"
+        ]
+       },
+       {
+        "hit": "H3",
+        "benign_explanations": [
+         "Preinstall script added as part of build process for 2.0.3; not an automation identity."
+        ],
+        "keep": true,
+        "citations": [
+         "R20"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 32.47,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:03:12",
+     "event": "agent_start",
+     "role": "reporter",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 100.0,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:04:19",
+     "event": "agent",
+     "role": "reporter",
+     "attempt": 0,
+     "errors": [],
+     "output": {
+      "risk_level": "medium",
+      "summary": "Publisher acct-3 took over after a long gap and added install scripts near cutoff. Multiple releases across version lines appeared simultaneously at T0.",
+      "indicators": [
+       {
+        "hit": "H1",
+        "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+        "rows": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "why": "Three releases across three version lines published within minutes near cutoff.",
+        "rows": [
+         "R20",
+         "R21",
+         "R22"
+        ]
+       },
+       {
+        "hit": "H3",
+        "why": "Preinstall install script first appears in release 2.0.3 near cutoff.",
+        "rows": [
+         "R19",
+         "R20",
+         "R21"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 100.0,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:04:19",
+     "event": "result",
+     "package": "coa",
+     "as_of": "2021-11-04 14:02:00",
+     "retries": 0,
+     "path": "llm",
+     "row_versions": {
+      "R1": "0.3.1",
+      "R2": "0.3.2",
+      "R3": "0.3.3",
+      "R4": "0.3.4",
+      "R5": "0.3.5",
+      "R6": "0.3.6",
+      "R7": "0.3.7",
+      "R8": "0.3.8",
+      "R9": "0.3.9",
+      "R10": "0.4.0",
+      "R11": "0.4.1",
+      "R12": "1.0.0",
+      "R13": "1.0.1",
+      "R14": "1.0.2",
+      "R15": "1.0.3",
+      "R16": "1.0.4",
+      "R17": "2.0.0",
+      "R18": "2.0.1",
+      "R19": "2.0.2",
+      "R20": "2.0.3",
+      "R21": "2.1.3",
+      "R22": "3.1.3",
+      "R23": "2.0.4",
+      "R24": "2.1.1",
+      "R25": "3.0.1"
+     },
+     "risk_level": "medium",
+     "summary": "Publisher acct-3 took over after a long gap and added install scripts near cutoff. Multiple releases across version lines appeared simultaneously at T0.",
+     "indicators": [
+      {
+       "hit": "H1",
+       "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+       "rows": [
+        "R23",
+        "R24",
+        "R25"
+       ]
+      },
+      {
+       "hit": "H2",
+       "why": "Three releases across three version lines published within minutes near cutoff.",
+       "rows": [
+        "R20",
+        "R21",
+        "R22"
+       ]
+      },
+      {
+       "hit": "H3",
+       "why": "Preinstall install script first appears in release 2.0.3 near cutoff.",
+       "rows": [
+        "R19",
+        "R20",
+        "R21"
+       ]
+      }
+     ],
+     "kept_by_skeptic": 3,
+     "meter": {
+      "calls": 2,
+      "tokens_in": 14510,
+      "tokens_out": 3131,
+      "seconds": 98.89591097831726,
+      "est_usd": 0.004781
+     },
+     "wall_s": 100.0
+    }
+   }
+  },
+  {
+   "t": 100.0,
+   "type": "result",
+   "data": {
+    "mode": "agent",
+    "risk": "medium",
+    "path": "llm",
+    "summary": "Publisher acct-3 took over after a long gap and added install scripts near cutoff. Multiple releases across version lines appeared simultaneously at T0.",
+    "indicators": [
+     {
+      "hit": "H1",
+      "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+      "rows": [
+       "R23",
+       "R24",
+       "R25"
+      ]
+     },
+     {
+      "hit": "H2",
+      "why": "Three releases across three version lines published within minutes near cutoff.",
+      "rows": [
+       "R20",
+       "R21",
+       "R22"
+      ]
+     },
+     {
+      "hit": "H3",
+      "why": "Preinstall install script first appears in release 2.0.3 near cutoff.",
+      "rows": [
+       "R19",
+       "R20",
+       "R21"
+      ]
+     }
+    ],
+    "retries": 0,
+    "kept": 3,
+    "meter": {
+     "calls": 2,
+     "tokens_in": 14510,
+     "tokens_out": 3131,
+     "seconds": 98.89591097831726,
+     "est_usd": 0.004781
+    },
+    "wall_s": 100.0,
+    "cited": [
+     {
+      "indicator": "release_burst",
+      "row": "coa@2.0.3"
+     },
+     {
+      "indicator": "install_script_added",
+      "row": "coa@2.0.3"
+     },
+     {
+      "indicator": "release_burst",
+      "row": "coa@2.0.4"
+     }
+    ],
+    "row_versions": {
+     "R1": "0.3.1",
+     "R2": "0.3.2",
+     "R3": "0.3.3",
+     "R4": "0.3.4",
+     "R5": "0.3.5",
+     "R6": "0.3.6",
+     "R7": "0.3.7",
+     "R8": "0.3.8",
+     "R9": "0.3.9",
+     "R10": "0.4.0",
+     "R11": "0.4.1",
+     "R12": "1.0.0",
+     "R13": "1.0.1",
+     "R14": "1.0.2",
+     "R15": "1.0.3",
+     "R16": "1.0.4",
+     "R17": "2.0.0",
+     "R18": "2.0.1",
+     "R19": "2.0.2",
+     "R20": "2.0.3",
+     "R21": "2.1.3",
+     "R22": "3.1.3",
+     "R23": "2.0.4",
+     "R24": "2.1.1",
+     "R25": "3.0.1"
+    },
+    "hits": 3
+   }
+  }
+ ]
+}

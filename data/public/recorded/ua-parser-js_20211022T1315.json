@@ -1,0 +1,766 @@
+{
+ "package": "ua-parser-js",
+ "as_of": "2021-10-22T13:15",
+ "recorded_at": "2026-10-26T10:31:18+00:00",
+ "source": "zetaris",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "wall_s": 116.84,
+ "calls": 3,
+ "events": [
+  {
+   "t": 3.5,
+   "type": "timeline",
+   "data": {
+    "rows": [
+     {
+      "version": "0.4.7",
+      "t": "2012-11-06T10:47",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.4.13",
+      "t": "2012-11-28T08:53",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.4.15",
+      "t": "2012-12-05T04:16",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.1",
+      "t": "2013-01-25T13:31",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.2",
+      "t": "2013-01-28T12:25",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.3",
+      "t": "2013-02-05T15:37",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.11",
+      "t": "2013-02-07T16:28",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.12",
+      "t": "2013-02-15T03:27",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.15",
+      "t": "2013-03-05T14:07",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.20",
+      "t": "2013-03-16T07:40",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.22",
+      "t": "2013-03-20T05:06",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.23",
+      "t": "2013-03-20T06:07",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.25",
+      "t": "2013-03-22T06:27",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.5.27",
+      "t": "2013-03-26T07:19",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.6.0",
+      "t": "2013-04-04T06:50",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.6.2",
+      "t": "2013-07-04T12:36",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.0",
+      "t": "2014-06-25T07:47",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.1",
+      "t": "2014-10-19T10:06",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.3",
+      "t": "2014-11-09T14:12",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.4",
+      "t": "2015-04-06T18:58",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.6",
+      "t": "2015-04-14T18:42",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.7",
+      "t": "2015-05-01T10:29",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.9",
+      "t": "2015-07-18T21:10",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.10",
+      "t": "2015-12-12T12:12",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.11",
+      "t": "2016-11-06T17:39",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.12",
+      "t": "2016-11-14T03:31",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.13",
+      "t": "2017-06-22T07:21",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.14",
+      "t": "2017-07-19T12:47",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.15",
+      "t": "2017-10-12T02:29",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.16",
+      "t": "2017-10-12T05:13",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.17",
+      "t": "2017-10-12T08:18",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.18",
+      "t": "2018-05-04T16:18",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.19",
+      "t": "2018-10-25T18:36",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.20",
+      "t": "2019-06-08T14:53",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.21",
+      "t": "2019-12-19T18:16",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.22",
+      "t": "2020-09-12T09:15",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.23",
+      "t": "2020-12-10T04:19",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.24",
+      "t": "2021-02-12T03:02",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.25",
+      "t": "2021-03-24T09:02",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.26",
+      "t": "2021-03-27T14:35",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.27",
+      "t": "2021-04-02T11:28",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.28",
+      "t": "2021-04-10T14:42",
+      "publisher": "faisalman",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "0.7.29",
+      "t": "2021-10-22T12:15",
+      "publisher": "faisalman",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": "install_script_added"
+     },
+     {
+      "version": "0.8.0",
+      "t": "2021-10-22T12:16",
+      "publisher": "faisalman",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     },
+     {
+      "version": "1.0.0",
+      "t": "2021-10-22T12:16",
+      "publisher": "faisalman",
+      "scripts": "preinstall",
+      "source": "synthetic",
+      "hit": null
+     }
+    ],
+    "as_of": "2021-10-22T13:15"
+   }
+  },
+  {
+   "t": 3.5,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:24",
+     "event": "retriever",
+     "package": "ua-parser-js",
+     "as_of": "2021-10-22 13:15:00",
+     "releases": 52,
+     "hits": [
+      [
+       "release_burst",
+       "0.7.29"
+      ],
+      [
+       "install_script_added",
+       "0.7.29"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "t": 3.5,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:24",
+     "event": "evidence",
+     "hits": [
+      {
+       "id": "H1",
+       "indicator": "release_burst",
+       "row": "R23",
+       "hours_before_T0": 0.0,
+       "detail": "3 releases across 3 release lines within 10 minutes",
+       "facts": {
+        "release_lines_in_burst": 3,
+        "lines_that_already_existed": 1,
+        "same_publisher_as_previous_release": true,
+        "prerelease_versions": 0
+       }
+      },
+      {
+       "id": "H2",
+       "indicator": "install_script_added",
+       "row": "R23",
+       "hours_before_T0": 0.0,
+       "detail": "install-time script appears: preinstall",
+       "facts": {
+        "script_type": "preinstall",
+        "publisher_earlier_releases": 48
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 3.5,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:24",
+     "event": "planner",
+     "plan": {
+      "focus": [
+       "H2",
+       "H1"
+      ],
+      "note": "rule-based planner: install scripts and new publishers first, then newest"
+     }
+    }
+   }
+  },
+  {
+   "t": 3.5,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:24",
+     "event": "agent_start",
+     "role": "skeptic",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 20.65,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:42",
+     "event": "agent",
+     "role": "skeptic",
+     "attempt": 0,
+     "errors": [],
+     "output": {
+      "assessments": [
+       {
+        "hit": "H1",
+        "benign_explanations": [
+         "Coordinated release of patch, minor, and major lines by same publisher.",
+         "Only one line existed previously; new lines added, not a backport sweep."
+        ],
+        "keep": true,
+        "citations": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "benign_explanations": [
+         "Preinstall script introduced for new build process in latest versions.",
+         "Same long-term publisher adds script alongside major version bumps."
+        ],
+        "keep": true,
+        "citations": [
+         "R22",
+         "R23",
+         "R24",
+         "R25"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 20.65,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T15:59:42",
+     "event": "agent_start",
+     "role": "reporter",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 54.98,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:00:17",
+     "event": "agent",
+     "role": "reporter",
+     "attempt": 0,
+     "errors": [
+      "risk_level low contradicts the 2 indicator(s) the Skeptic kept; use medium or high, or explain why they are benign and reject them"
+     ],
+     "output": {
+      "risk_level": "low",
+      "summary": "The package has 52 prior releases by a single publisher with no dependencies. Recent simultaneous releases and new preinstall scripts at cutoff warrant monitoring but have plausible benign explanations.",
+      "indicators": [
+       {
+        "hit": "H1",
+        "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+        "rows": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "why": "Preinstall script introduced in latest releases by same publisher at cutoff.",
+        "rows": [
+         "R22",
+         "R23",
+         "R24",
+         "R25"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 54.98,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:00:17",
+     "event": "agent_start",
+     "role": "reporter",
+     "attempt": 1
+    }
+   }
+  },
+  {
+   "t": 116.84,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:18",
+     "event": "agent",
+     "role": "reporter",
+     "attempt": 1,
+     "errors": [],
+     "output": {
+      "risk_level": "medium",
+      "summary": "The package has 52 prior releases by a single publisher with no dependencies. Recent simultaneous releases and new preinstall scripts at cutoff raise mild concern but may be benign.",
+      "indicators": [
+       {
+        "hit": "H1",
+        "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+        "rows": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "why": "Preinstall script introduced in latest releases by same publisher at cutoff.",
+        "rows": [
+         "R22",
+         "R23",
+         "R24",
+         "R25"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 116.84,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:18",
+     "event": "result",
+     "package": "ua-parser-js",
+     "as_of": "2021-10-22 13:15:00",
+     "retries": 1,
+     "path": "llm",
+     "row_versions": {
+      "R1": "0.7.6",
+      "R2": "0.7.7",
+      "R3": "0.7.9",
+      "R4": "0.7.10",
+      "R5": "0.7.11",
+      "R6": "0.7.12",
+      "R7": "0.7.13",
+      "R8": "0.7.14",
+      "R9": "0.7.15",
+      "R10": "0.7.16",
+      "R11": "0.7.17",
+      "R12": "0.7.18",
+      "R13": "0.7.19",
+      "R14": "0.7.20",
+      "R15": "0.7.21",
+      "R16": "0.7.22",
+      "R17": "0.7.23",
+      "R18": "0.7.24",
+      "R19": "0.7.25",
+      "R20": "0.7.26",
+      "R21": "0.7.27",
+      "R22": "0.7.28",
+      "R23": "0.7.29",
+      "R24": "0.8.0",
+      "R25": "1.0.0"
+     },
+     "risk_level": "medium",
+     "summary": "The package has 52 prior releases by a single publisher with no dependencies. Recent simultaneous releases and new preinstall scripts at cutoff raise mild concern but may be benign.",
+     "indicators": [
+      {
+       "hit": "H1",
+       "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+       "rows": [
+        "R23",
+        "R24",
+        "R25"
+       ]
+      },
+      {
+       "hit": "H2",
+       "why": "Preinstall script introduced in latest releases by same publisher at cutoff.",
+       "rows": [
+        "R22",
+        "R23",
+        "R24",
+        "R25"
+       ]
+      }
+     ],
+     "kept_by_skeptic": 2,
+     "meter": {
+      "calls": 3,
+      "tokens_in": 17307,
+      "tokens_out": 5785,
+      "seconds": 114.8073160648346,
+      "est_usd": 0.006932
+     },
+     "wall_s": 116.84
+    }
+   }
+  },
+  {
+   "t": 116.84,
+   "type": "result",
+   "data": {
+    "mode": "agent",
+    "risk": "medium",
+    "path": "llm",
+    "summary": "The package has 52 prior releases by a single publisher with no dependencies. Recent simultaneous releases and new preinstall scripts at cutoff raise mild concern but may be benign.",
+    "indicators": [
+     {
+      "hit": "H1",
+      "why": "Three releases across patch, minor, major lines published simultaneously at cutoff.",
+      "rows": [
+       "R23",
+       "R24",
+       "R25"
+      ]
+     },
+     {
+      "hit": "H2",
+      "why": "Preinstall script introduced in latest releases by same publisher at cutoff.",
+      "rows": [
+       "R22",
+       "R23",
+       "R24",
+       "R25"
+      ]
+     }
+    ],
+    "retries": 1,
+    "kept": 2,
+    "meter": {
+     "calls": 3,
+     "tokens_in": 17307,
+     "tokens_out": 5785,
+     "seconds": 114.8073160648346,
+     "est_usd": 0.006932
+    },
+    "wall_s": 116.84,
+    "cited": [
+     {
+      "indicator": "release_burst",
+      "row": "ua-parser-js@0.7.29"
+     },
+     {
+      "indicator": "install_script_added",
+      "row": "ua-parser-js@0.7.29"
+     }
+    ],
+    "row_versions": {
+     "R1": "0.7.6",
+     "R2": "0.7.7",
+     "R3": "0.7.9",
+     "R4": "0.7.10",
+     "R5": "0.7.11",
+     "R6": "0.7.12",
+     "R7": "0.7.13",
+     "R8": "0.7.14",
+     "R9": "0.7.15",
+     "R10": "0.7.16",
+     "R11": "0.7.17",
+     "R12": "0.7.18",
+     "R13": "0.7.19",
+     "R14": "0.7.20",
+     "R15": "0.7.21",
+     "R16": "0.7.22",
+     "R17": "0.7.23",
+     "R18": "0.7.24",
+     "R19": "0.7.25",
+     "R20": "0.7.26",
+     "R21": "0.7.27",
+     "R22": "0.7.28",
+     "R23": "0.7.29",
+     "R24": "0.8.0",
+     "R25": "1.0.0"
+    },
+    "hits": 2
+   }
+  }
+ ]
+}

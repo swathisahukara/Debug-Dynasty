@@ -1,7 +1,7 @@
 """Package Trail UI server (stdlib only). Run:  python3 -m app.server   then open http://127.0.0.1:8765
 Binds to localhost. Uses the same agents/ code as the CLI and eval; nothing here hardcodes an answer."""
 import csv, json, os, queue, sys, threading, time, traceback
-from datetime import datetime
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -37,7 +37,61 @@ def state():
     try: cs = case_list()
     except Exception as e: cs = []; print("cases unavailable:", e)
     return dict(mode=dict(public=PUBLIC, sample=C.SAMPLE_MODE, llm_mock=C.LLM_MOCK, data_source=C.DATA_SOURCE, model=os.environ.get("NEMOTRON_MODEL", "")),
-                cases=cs, scoreboard=jload(RES / "scoreboard.json"), replay=jload(RES / "replay_scoreboard.json"), graph=CompiledGraph().to_json())
+                cases=cs, recorded=recorded_summary(), scoreboard=jload(RES / "scoreboard.json"), replay=jload(RES / "replay_scoreboard.json"), graph=CompiledGraph().to_json())
+
+
+RECORDED = ROOT / "data/public/recorded"
+REC_SPEED = float(os.environ.get("RECORDED_SPEED", "0.25"))  # playback runs faster than the original run (at most 5 s per step)
+
+
+def recordings():
+    out = []
+    for f in (sorted(RECORDED.glob("*.json")) if RECORDED.exists() else []):
+        try: out.append(json.loads(f.read_text()))
+        except ValueError: pass
+    return out
+
+
+def find_recording(pkg, as_of):
+    key = as_of.isoformat(timespec="minutes")
+    return next((r for r in recordings() if r["package"] == pkg and r["as_of"] == key), None)
+
+
+def recorded_summary():
+    return [dict(package=r["package"], as_of=r["as_of"], recorded_at=r["recorded_at"], wall_s=r["wall_s"], calls=r["calls"], source=r["source"]) for r in recordings()]
+
+
+def play_recording(rec, emit):
+    emit("step", role="recorded", text=f"Replaying a recorded run: real {rec['model'] or 'Nemotron'} calls through Meterless Nightshift, data from {rec['source']}, recorded {rec['recorded_at'][:10]}, original run {rec['wall_s']} s. Nothing is called live on this public site.", hits=[])
+    prev = 0.0
+    for ev in rec["events"]:
+        time.sleep(min(max(ev["t"] - prev, 0) * REC_SPEED, 5)); prev = ev["t"]
+        kw = dict(ev["data"])
+        if ev["type"] == "result": kw["recorded"] = dict(at=rec["recorded_at"], wall_s=rec["wall_s"], source=rec["source"], model=rec["model"])
+        emit(ev["type"], **kw)
+
+
+def record(pkg, as_of, source):
+    """Run the real agent loop once (local machine only) and store its event stream so the public site can replay it."""
+    events, t0 = [], time.time()
+    def emit(type_, **kw): events.append(dict(t=round(time.time() - t0, 2), type=type_, data=json.loads(json.dumps(kw, default=str))))
+    old = C.DATA_SOURCE; C.DATA_SOURCE = source
+    try: agent(pkg, as_of, emit)
+    finally: C.DATA_SOURCE = old
+    res = next((e["data"] for e in events if e["type"] == "result"), None)
+    errs = [e["data"].get("text") for e in events if e["type"] == "error"]
+    if errs or not res: raise RuntimeError("run failed: " + str(errs[:1]))
+    if res.get("path") != "llm": raise RuntimeError("no indicator fired at this cutoff, nothing to record")
+    key = as_of.isoformat(timespec="minutes")
+    rec = dict(package=pkg, as_of=key, recorded_at=datetime.now(timezone.utc).isoformat(timespec="seconds"), source=source, model=os.environ.get("NEMOTRON_MODEL", ""),
+               wall_s=res.get("wall_s"), calls=(res.get("meter") or {}).get("calls"), events=events)
+    text = json.dumps(rec, indent=1)
+    for secret in (os.environ.get("METERLESS_RUNTIME_TOKEN"), os.environ.get("ZETARIS_API_KEY")):
+        if secret and secret in text: raise RuntimeError("refusing to save: a secret appears in the trace")
+    RECORDED.mkdir(parents=True, exist_ok=True)
+    path = RECORDED / f"{pkg}_{key.replace('-', '').replace(':', '')}.json"
+    path.write_text(text)
+    return dict(saved=str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path), events=len(events), wall_s=rec["wall_s"], calls=rec["calls"], source=source)
 
 
 def timeline(pkg, as_of, hits, rel):
@@ -203,8 +257,16 @@ class H(BaseHTTPRequestHandler):
     def do_POST(self):
         try: b = self.body()
         except ValueError: return self.send(400, {"error": "bad json"})
+        if self.path == "/api/record":
+            local = self.client_address[0] in ("127.0.0.1", "::1") and not any(self.headers.get(h) for h in ("X-Forwarded-For", "CF-Connecting-IP", "Cf-Ray"))
+            if PUBLIC or not local: return self.send(403, {"error": "recording is only allowed from the local machine"})
+            try: pkg, as_of = str(b.get("package", "")).strip(), datetime.fromisoformat(b["as_of"])
+            except (KeyError, ValueError): return self.send(400, {"error": "package and as_of are required"})
+            if not data.PKG_RE.match(pkg) or b.get("source", "zetaris") not in ("csv", "zetaris"): return self.send(400, {"error": "bad package or source"})
+            try: return self.send(200, record(pkg, as_of, b.get("source", "zetaris")))
+            except Exception as e: traceback.print_exc(); return self.send(500, {"error": f"{type(e).__name__}: {e}"})
         if PUBLIC and self.path in ("/api/source", "/api/rule"): return self.send(403, {"error": "read-only public demo"})
-        if PUBLIC and (b.get("mode") == "agent" or b.get("learn")): return self.send(403, {"error": "the public demo is replay only; live agent runs happen locally"})
+        if PUBLIC and b.get("learn"): return self.send(403, {"error": "the public demo is replay only; live agent runs happen locally"})
         if self.path == "/api/source":
             if b.get("source") not in ("csv", "zetaris"): return self.send(400, {"error": "source must be csv or zetaris"})
             C.DATA_SOURCE = b["source"]; return self.send(200, {"data_source": C.DATA_SOURCE})
@@ -219,6 +281,12 @@ class H(BaseHTTPRequestHandler):
         live_mode = bool(b.get("live"))
         try: as_of = datetime.fromisoformat(b["as_of"]) if b.get("as_of") else (None if live_mode else datetime(2100, 1, 1))
         except ValueError: return self.send(400, {"error": "bad as_of"})
+        rec = None
+        if PUBLIC and b.get("mode") == "agent" and not live_mode:
+            rec = find_recording(pkg, as_of)
+            if not rec:
+                have = ", ".join(f"{r['package']} {r['as_of'][:10]}" for r in recordings())
+                return self.send(403, {"error": "The public demo replays recorded agent runs only" + (f" ({have}). Pick one of those red-dot known cases." if have else ". Live agent runs happen locally.")})
         if live_mode and not rate_ok((self.headers.get("X-Forwarded-For") or self.client_address[0]).split(",")[0].strip()):
             return self.send(429, {"error": "too many live checks, wait a minute"})
         self.send_response(200); self.send_header("Content-Type", "text/event-stream"); self.send_header("Cache-Control", "no-store"); self.end_headers()
@@ -226,6 +294,7 @@ class H(BaseHTTPRequestHandler):
             self.wfile.write(("data: " + json.dumps(dict(type=type_, **kw), default=str) + "\n\n").encode()); self.wfile.flush()
         try:
             if live_mode: return live_check(pkg, as_of, emit)
+            if rec: return play_recording(rec, emit)
             if not data._csv_by_pkg("releases").get(pkg) and C.DATA_SOURCE == "csv": return emit("error", text=f"{pkg} is not in the local dataset (39 packages). Tick \"live from the npm registry\" to check any package.")
             replay(pkg, as_of, bool(b.get("learn")), emit) if b.get("mode") != "agent" else agent(pkg, as_of, emit)
         except (BrokenPipeError, ConnectionResetError): pass

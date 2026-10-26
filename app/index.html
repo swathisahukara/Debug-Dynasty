@@ -162,7 +162,7 @@ td.n{font:13.5px var(--mono);font-variant-numeric:tabular-nums}
       <label>Data source</label>
       <select id="source"><option value="csv">Local CSV (same rows)</option><option value="zetaris">Zetaris Lightning SQL (live)</option></select>
       <button class="go" id="go">Investigate</button>
-      <p class="note hidden" id="pubnote">Public demo: replay and read-only graph. Live agent runs on Nemotron and the live Zetaris switch run locally; see the demo video and README.</p>
+      <p class="note hidden" id="pubnote">Public demo: compiled-graph replay, the fleet heatmap, live npm checks, and recorded agent runs (real Nemotron and Zetaris traces captured on a laptop). New live agent runs and the live Zetaris switch run locally; see the demo video and README.</p>
       <p class="note">Indicators are risk signals, not accusations. Not a malware verdict.</p>
     </div>
     <div class="stack">
@@ -236,9 +236,11 @@ async function load(){
     `<span class="badge on">Zetaris</span>`,`<span class="badge on">Meterless Nightshift</span>`,`<span class="badge on">${esc(m.model||"nemotron")}</span>`].join("");
   $("#source").value=m.data_source;
   if(m.public){
-    document.querySelector("input[value=agent]").closest("label").style.display="none";
+    const arl=document.querySelector("input[value=agent]").closest("label");
+    if(ST.recorded&&ST.recorded.length){const r0=ST.recorded[0];arl.querySelector("span").innerHTML=`Recorded agent run on Nemotron<small>real trace: Zetaris query, then Nemotron through Meterless Nightshift, replayed here at about 4x speed. Recorded ${esc(r0.recorded_at.slice(0,10))}; available for ${ST.recorded.map(r=>esc(r.package)).join(", ")}</small>`;}
+    else arl.style.display="none";
     $("#learn").closest("label").style.display="none"; $("#source").previousElementSibling.style.display="none"; $("#source").style.display="none";
-    $("#badges").innerHTML=`<span class="badge on">public demo: replay only</span><span class="badge">data: CSV snapshot of the Zetaris tables</span>`;
+    $("#badges").innerHTML=`<span class="badge on">public demo: replay + recorded runs</span><span class="badge">data: CSV snapshot of the Zetaris tables</span>`;
     $("#pubnote").classList.remove("hidden");
   }
   const pk=[...new Set(ST.cases.map(c=>c.package))]; $("#pkgs").innerHTML=pk.map(p=>`<option value="${esc(p)}">`).join("");
@@ -378,7 +380,7 @@ function handle(ev){
     $("#verdict").className="";
     $("#verdict").innerHTML=`<div class="vh"><span class="dot"></span><h3>${head}</h3></div><p class="vpath">${esc(how)}</p>
       <p class="vsum">${esc(ev.summary||"")}</p>${ind?`<ul class="ev">${ind}</ul>`:""}
-      ${ev.meta?`<p class="note">${esc(ev.meta.versions_on_registry)} versions on the registry · latest ${esc(ev.meta.latest)} · last release ${esc(ev.meta.last_release)} UTC</p>`:""}${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}${ev.mode==="agent"&&ev.path==="cheap"?`<p class="note">No indicator fired for this package at this cutoff, so there was nothing for the agent to investigate and no model call was made. To see live Nemotron calls, pick a red-dot known case (an incident cutoff) and run the agent loop again.</p>`:""}
+      ${ev.meta?`<p class="note">${esc(ev.meta.versions_on_registry)} versions on the registry · latest ${esc(ev.meta.latest)} · last release ${esc(ev.meta.last_release)} UTC</p>`:""}${ev.note?`<p class="note">${esc(ev.note)}</p>`:""}${ev.recorded?`<p class="note">Recorded run, not a live call: captured ${esc(ev.recorded.at.slice(0,10))} on ${esc(ev.recorded.model||"Nemotron")} through Meterless Nightshift with data from ${esc(ev.recorded.source)}; the original took ${esc(ev.recorded.wall_s)} s.</p>`:""}${ev.mode==="agent"&&ev.path==="cheap"?`<p class="note">No indicator fired for this package at this cutoff, so there was nothing for the agent to investigate and no model call was made. To see live Nemotron calls, pick a red-dot known case (an incident cutoff) and run the agent loop again.</p>`:""}
       ${ind?"":`<div class="cited">${(ev.cited||[]).map(c=>`<span>${esc(c.indicator)} · ${esc(c.row)}</span>`).join("")||"no cited rows (no indicator fired)"}</div>`}
       <div class="actions"><button type="button" class="chip" id="copyLink">Copy link</button><button type="button" class="chip" id="copyRep">Copy report</button></div>`;
     LAST=Object.assign({},REQ,{ev});

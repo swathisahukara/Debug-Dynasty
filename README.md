@@ -5,6 +5,18 @@ Open Agent Hackathon 2026. Ask "is this open-source package still trustworthy?" 
 reasoning into an editable graph of federated queries and rules, then replays it across many
 packages and calls the LLM only on anomalies.
 
+## Run it yourself
+Python 3.10 or newer. The app, the evaluation and the tests use only the standard library, so there is nothing to `pip install`.
+
+| Goal | Command | Needs |
+|---|---|---|
+| **See it work in a minute (no keys, no network)** | `SAMPLE_MODE=1 LLM_MOCK=1 python3 -m app.server`, then open http://127.0.0.1:8765 | nothing |
+| **Run the tests** | `SAMPLE_MODE=1 python3 -m unittest discover -s tests` | nothing |
+| **Try the hosted copy** | https://package-trail.onrender.com (replay, fleet heatmap, live npm checks, recorded agent runs) | a browser |
+| **The full live stack (what the demo video shows)** | `cp .env.example .env`, fill it in, then `python3 -m app.server` | Zetaris running in Docker, Meterless Nightshift running with an NVIDIA Nemotron lane |
+
+In the UI, the red-dot **Known cases** are real incident cutoffs: they have indicators, so the agent loop calls Nemotron (1 to 3 minutes). Clean packages and unflagged dates take the **cheap path**: nothing fires, so there is no model call and the answer is instant. That is the compile-and-replay idea, not a fault.
+
 ## At a glance
 - **Track:** Reasoning Architecture (compile and replay). The agent loop runs once; its reasoning is compiled into an editable decision graph (`graphs/package_trail_graph.json`) that replays with 0 LLM calls.
 - **Result (40 cases: 10 incidents, 30 clean controls):** agent loop 5/10 detected, 1/30 false alarms, 11/11 cited rows real, about $0.0004 per case; single-shot LLM 5/10, 10/30 false alarms. Replay over 4,524 package-date cells: 0 LLM calls (single-shot would cost about $10). Limits are stated below.
@@ -71,4 +83,4 @@ Every result has **Copy link** (permalink `#pkg=...&asof=...&live=1`) and **Copy
 [Sponsor technology](docs/SPONSOR_TECH.md) · [Demo script](docs/DEMO_SCRIPT.md)
 
 ## Public demo (read-only)
-A hosted copy runs `PUBLIC_MODE=1` on `data/public/` (see `render.yaml`): replay of the compiled graph, the graph viewer and the scoreboard, with no LLM calls, no rule edits and no data-source switching, so it needs no keys and cannot spend quota. Live agent runs on Nemotron and the Zetaris switch run locally (`python3 -m app.server`). Public URL: https://package-trail.onrender.com (free tier: the first load after idle can take about a minute)
+A hosted copy runs `PUBLIC_MODE=1` on `data/public/` (see `render.yaml`): replay of the compiled graph, the fleet heatmap, live npm checks, the graph viewer and the scoreboard, with no LLM calls, no rule edits and no data-source switching, so it needs no keys and cannot spend quota. It also replays **recorded agent runs**: real traces captured on a laptop with live Zetaris and Nemotron through Nightshift (`data/public/recorded/`, saved by `POST /api/record`, which only accepts requests from the local machine), played back at about 4x speed and labelled as recorded. New live agent runs and the Zetaris switch run locally (`python3 -m app.server`). Public URL: https://package-trail.onrender.com (free tier: the first load after idle can take about a minute)

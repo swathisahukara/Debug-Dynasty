@@ -1,0 +1,709 @@
+{
+ "package": "event-stream",
+ "as_of": "2018-09-09T09:28",
+ "recorded_at": "2026-10-26T10:32:30+00:00",
+ "source": "zetaris",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "wall_s": 62.88,
+ "calls": 2,
+ "events": [
+  {
+   "t": 1.9,
+   "type": "timeline",
+   "data": {
+    "rows": [
+     {
+      "version": "2.1.4",
+      "t": "2012-07-04T17:12",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.1.5",
+      "t": "2012-07-11T12:05",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.1.7",
+      "t": "2012-07-19T16:52",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.1.8",
+      "t": "2012-07-23T20:34",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.1.9",
+      "t": "2012-08-04T12:59",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.2.0",
+      "t": "2012-08-07T14:52",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.2.1",
+      "t": "2012-08-10T12:31",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.2.2",
+      "t": "2012-08-15T12:26",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "2.2.3",
+      "t": "2012-08-18T13:10",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.0",
+      "t": "2012-08-18T13:39",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.1",
+      "t": "2012-08-18T14:18",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.2",
+      "t": "2012-08-19T19:44",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.3",
+      "t": "2012-08-30T14:25",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.4",
+      "t": "2012-08-31T09:40",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.5",
+      "t": "2012-09-25T23:02",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.6",
+      "t": "2012-09-30T22:39",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.7",
+      "t": "2012-09-30T22:43",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.8",
+      "t": "2012-11-27T07:27",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.9",
+      "t": "2012-12-12T04:48",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.10",
+      "t": "2012-12-13T00:57",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.11",
+      "t": "2013-01-06T10:32",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.12",
+      "t": "2013-03-09T00:18",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.13",
+      "t": "2013-03-27T10:03",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.14",
+      "t": "2013-04-22T23:37",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.15",
+      "t": "2013-06-18T15:25",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.16",
+      "t": "2013-07-13T23:10",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.17",
+      "t": "2013-12-04T14:25",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.18",
+      "t": "2013-12-04T14:41",
+      "publisher": "",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.0.20",
+      "t": "2013-12-11T14:44",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.0",
+      "t": "2014-01-09T07:19",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.1",
+      "t": "2014-03-27T04:12",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.2",
+      "t": "2014-04-13T10:33",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.4",
+      "t": "2014-04-28T16:14",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.5",
+      "t": "2014-04-30T03:59",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.1.7",
+      "t": "2014-07-21T01:03",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.2.0",
+      "t": "2014-12-27T06:59",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.2.1",
+      "t": "2014-12-29T20:38",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.2.2",
+      "t": "2015-02-02T10:11",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.0",
+      "t": "2015-03-06T10:58",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.1",
+      "t": "2015-05-06T02:59",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.2",
+      "t": "2015-10-16T04:25",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.3",
+      "t": "2016-06-18T23:39",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.4",
+      "t": "2016-07-17T07:24",
+      "publisher": "dominictarr",
+      "scripts": "",
+      "source": "npm",
+      "hit": null
+     },
+     {
+      "version": "3.3.5",
+      "t": "2018-09-05T05:27",
+      "publisher": "right9ctrl",
+      "scripts": "",
+      "source": "npm",
+      "hit": "new_publisher_gap"
+     },
+     {
+      "version": "3.3.6",
+      "t": "2018-09-09T08:28",
+      "publisher": "right9ctrl",
+      "scripts": "",
+      "source": "synthetic",
+      "hit": "new_dependency"
+     }
+    ],
+    "as_of": "2018-09-09T09:28"
+   }
+  },
+  {
+   "t": 1.9,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:29",
+     "event": "retriever",
+     "package": "event-stream",
+     "as_of": "2018-09-09 09:28:00",
+     "releases": 83,
+     "hits": [
+      [
+       "new_publisher_gap",
+       "3.3.5"
+      ],
+      [
+       "new_dependency",
+       "3.3.6"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "t": 1.9,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:29",
+     "event": "evidence",
+     "hits": [
+      {
+       "id": "H1",
+       "indicator": "new_dependency",
+       "row": "R25",
+       "hours_before_T0": 0.0,
+       "detail": "1 new dependencies in a same-major release, newest dependency package is 35 days old",
+       "new_dependencies": [
+        "dep-1"
+       ],
+       "new_dependency_package_age_days": [
+        35
+       ]
+      },
+      {
+       "id": "H2",
+       "indicator": "new_publisher_gap",
+       "row": "R24",
+       "hours_before_T0": 99.0,
+       "detail": "publisher first seen after 779 days without a release",
+       "facts": {
+        "publisher_listed_as_maintainer_on_this_release": true,
+        "publisher_listed_as_maintainer_on_earlier_releases": false
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "t": 1.9,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:29",
+     "event": "planner",
+     "plan": {
+      "focus": [
+       "H2",
+       "H1"
+      ],
+      "note": "rule-based planner: install scripts and new publishers first, then newest"
+     }
+    }
+   }
+  },
+  {
+   "t": 1.9,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:29",
+     "event": "agent_start",
+     "role": "skeptic",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 19.99,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:47",
+     "event": "agent",
+     "role": "skeptic",
+     "attempt": 0,
+     "errors": [],
+     "output": {
+      "assessments": [
+       {
+        "hit": "H1",
+        "benign_explanations": [
+         "New dependency dep-1 added for feature/bug fix in same-major release (no documented benign pattern).",
+         "New publisher acct-2 may have updated dependencies as part of routine maintenance."
+        ],
+        "keep": true,
+        "citations": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "benign_explanations": [
+         "Pattern (b) not met: publisher_listed_as_maintainer_on_this_release is true, so not an automation identity.",
+         "Publisher acct-2 appears after 779-day gap, could be legitimate maintainer takeover."
+        ],
+        "keep": true,
+        "citations": [
+         "R23",
+         "R24"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 19.99,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:01:47",
+     "event": "agent_start",
+     "role": "reporter",
+     "attempt": 0
+    }
+   }
+  },
+  {
+   "t": 62.88,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:30",
+     "event": "agent",
+     "role": "reporter",
+     "attempt": 0,
+     "errors": [],
+     "output": {
+      "risk_level": "medium",
+      "summary": "A new publisher appeared after a 779-day hiatus and immediately released two versions, the latest adding a new dependency. This pattern warrants attention but may reflect legitimate maintainer transition.",
+      "indicators": [
+       {
+        "hit": "H1",
+        "why": "New dependency dep-1 added in same-major release by new publisher at cutoff.",
+        "rows": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       },
+       {
+        "hit": "H2",
+        "why": "Publisher acct-2 first appears after 779-day gap with no releases.",
+        "rows": [
+         "R23",
+         "R24",
+         "R25"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "t": 62.88,
+   "type": "log",
+   "data": {
+    "rec": {
+     "ts": "2026-10-26T16:02:30",
+     "event": "result",
+     "package": "event-stream",
+     "as_of": "2018-09-09 09:28:00",
+     "retries": 0,
+     "path": "llm",
+     "row_versions": {
+      "R1": "3.0.11",
+      "R2": "3.0.12",
+      "R3": "3.0.13",
+      "R4": "3.0.14",
+      "R5": "3.0.15",
+      "R6": "3.0.16",
+      "R7": "3.0.17",
+      "R8": "3.0.18",
+      "R9": "3.0.20",
+      "R10": "3.1.0",
+      "R11": "3.1.1",
+      "R12": "3.1.2",
+      "R13": "3.1.4",
+      "R14": "3.1.5",
+      "R15": "3.1.7",
+      "R16": "3.2.0",
+      "R17": "3.2.1",
+      "R18": "3.2.2",
+      "R19": "3.3.0",
+      "R20": "3.3.1",
+      "R21": "3.3.2",
+      "R22": "3.3.3",
+      "R23": "3.3.4",
+      "R24": "3.3.5",
+      "R25": "3.3.6"
+     },
+     "risk_level": "medium",
+     "summary": "A new publisher appeared after a 779-day hiatus and immediately released two versions, the latest adding a new dependency. This pattern warrants attention but may reflect legitimate maintainer transition.",
+     "indicators": [
+      {
+       "hit": "H1",
+       "why": "New dependency dep-1 added in same-major release by new publisher at cutoff.",
+       "rows": [
+        "R23",
+        "R24",
+        "R25"
+       ]
+      },
+      {
+       "hit": "H2",
+       "why": "Publisher acct-2 first appears after 779-day gap with no releases.",
+       "rows": [
+        "R23",
+        "R24",
+        "R25"
+       ]
+      }
+     ],
+     "kept_by_skeptic": 2,
+     "meter": {
+      "calls": 2,
+      "tokens_in": 14575,
+      "tokens_out": 3446,
+      "seconds": 61.78908634185791,
+      "est_usd": 0.004983
+     },
+     "wall_s": 62.88
+    }
+   }
+  },
+  {
+   "t": 62.88,
+   "type": "result",
+   "data": {
+    "mode": "agent",
+    "risk": "medium",
+    "path": "llm",
+    "summary": "A new publisher appeared after a 779-day hiatus and immediately released two versions, the latest adding a new dependency. This pattern warrants attention but may reflect legitimate maintainer transition.",
+    "indicators": [
+     {
+      "hit": "H1",
+      "why": "New dependency dep-1 added in same-major release by new publisher at cutoff.",
+      "rows": [
+       "R23",
+       "R24",
+       "R25"
+      ]
+     },
+     {
+      "hit": "H2",
+      "why": "Publisher acct-2 first appears after 779-day gap with no releases.",
+      "rows": [
+       "R23",
+       "R24",
+       "R25"
+      ]
+     }
+    ],
+    "retries": 0,
+    "kept": 2,
+    "meter": {
+     "calls": 2,
+     "tokens_in": 14575,
+     "tokens_out": 3446,
+     "seconds": 61.78908634185791,
+     "est_usd": 0.004983
+    },
+    "wall_s": 62.88,
+    "cited": [
+     {
+      "indicator": "new_publisher_gap",
+      "row": "event-stream@3.3.5"
+     },
+     {
+      "indicator": "new_dependency",
+      "row": "event-stream@3.3.6"
+     }
+    ],
+    "row_versions": {
+     "R1": "3.0.11",
+     "R2": "3.0.12",
+     "R3": "3.0.13",
+     "R4": "3.0.14",
+     "R5": "3.0.15",
+     "R6": "3.0.16",
+     "R7": "3.0.17",
+     "R8": "3.0.18",
+     "R9": "3.0.20",
+     "R10": "3.1.0",
+     "R11": "3.1.1",
+     "R12": "3.1.2",
+     "R13": "3.1.4",
+     "R14": "3.1.5",
+     "R15": "3.1.7",
+     "R16": "3.2.0",
+     "R17": "3.2.1",
+     "R18": "3.2.2",
+     "R19": "3.3.0",
+     "R20": "3.3.1",
+     "R21": "3.3.2",
+     "R22": "3.3.3",
+     "R23": "3.3.4",
+     "R24": "3.3.5",
+     "R25": "3.3.6"
+    },
+    "hits": 2
+   }
+  }
+ ]
+}

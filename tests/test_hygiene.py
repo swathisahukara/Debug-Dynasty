@@ -20,5 +20,17 @@ class HygieneTests(unittest.TestCase):
             self.assertEqual(out.stdout.strip(), "")
 
 
+    def test_recorded_traces_are_complete_and_carry_no_secrets(self):
+        import json
+        files = sorted((ROOT / "data/public/recorded").glob("*.json"))
+        self.assertTrue(files, "no recorded agent runs committed")
+        for f in files:
+            text = f.read_text(); rec = json.loads(text)
+            self.assertEqual(rec["events"][-1]["type"], "result", f.name)
+            self.assertGreater(rec["calls"], 0, f.name)
+            for needle in ("Bearer", "api_key", "nvapi-", "sk-"):
+                self.assertNotIn(needle, text, f"{f.name} must not contain {needle}")
+
+
 if __name__ == "__main__":
     unittest.main()
