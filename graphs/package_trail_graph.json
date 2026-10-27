@@ -81,11 +81,11 @@
   },
   {
    "when": "install_script_added+release_burst",
-   "risk": "medium",
+   "risk": "high",
    "support": 3,
    "agreement": 1.0,
    "rationale": "52 releases by one publisher, no dependencies. Simultaneous releases and new preinstall scripts at cutoff in R23, R24, R25 warrant monitoring.",
-   "source": "compiled from agent-loop runs"
+   "source": "edited in UI"
   },
   {
    "when": "new_dependency",
