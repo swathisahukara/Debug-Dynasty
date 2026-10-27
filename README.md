@@ -22,7 +22,7 @@ In the UI, the red-dot **Known cases** are real incident cutoffs: they have indi
 - **Result (40 cases: 10 incidents, 30 clean controls):** agent loop 5/10 detected, 1/30 false alarms, 11/11 cited rows real, about $0.0004 per case; single-shot LLM 5/10, 10/30 false alarms. Replay over 4,524 package-date cells: 0 LLM calls (single-shot would cost about $10). Limits are stated below.
 - **Try it (no keys):** `SAMPLE_MODE=1 LLM_MOCK=1 python3 -m app.server`, then open http://127.0.0.1:8765. With keys, drop the two variables. `LLM_MOCK=1` returns canned model replies for offline testing only; no reported number uses it.
 - **Sponsor tech:** Zetaris (data layer), Meterless (Nightshift endpoint and H-MEM engine), NVIDIA Nemotron, Cursor. See [docs/SPONSOR_TECH.md](docs/SPONSOR_TECH.md).
-- **Demo video:** [add link here] · script in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+- **Demo video:** [PackageTrail_DebugDynasty](https://drive.google.com/file/d/1SBl0-NXJ0Rmk-KVKP3G1_ZihY-Jg83y9/view?usp=sharing).
 
 ## Real vs synthetic data
 - **Real:** public npm registry metadata (per-version publish times, publishers, maintainers, dependencies, install scripts), fetched by `snapshot/fetch_packuments.py`.
@@ -33,7 +33,7 @@ In the UI, the red-dot **Known cases** are real incident cutoffs: they have indi
 Full snapshot goes to `data/raw/` (git-ignored). Copy `.env.example` to `.env` for live mode.
 
 ## Layout
-`snapshot/` data fetch, `data/` rows, `agents/` Planner/Retriever/Skeptic/Evaluator/Reporter, `eval/` scoring and baseline, `app/` UI (`python3 -m app.server`), `graphs/` compiled decision graph, `docs/` sponsor tech and demo script.
+`snapshot/` data fetch, `data/` rows, `agents/` Planner/Retriever/Skeptic/Evaluator/Reporter, `eval/` scoring and baseline, `app/` UI (`python3 -m app.server`), `graphs/` compiled decision graph, `docs/` sponsor tech.
 
 
 ## Pre-existing work (declared)
@@ -79,8 +79,28 @@ The v3 Skeptic receives deterministic per-hit facts (for example whether every r
 
 Every result has **Copy link** (permalink `#pkg=...&asof=...&live=1`) and **Copy report** (Markdown with verdict, rule and cited rows). Works in `SAMPLE_MODE=1` and with `LLM_MOCK=1` (no keys).
 
+## Sample inputs and outputs
+
+Three real runs of the full agent loop (Zetaris data, `nvidia/nemotron-3.5-lightning-30b-a3b` through Meterless Nightshift), recorded 2026-10-26. The complete traces are in `data/public/recorded/` and replay on the hosted site.
+
+| Input (package, UTC cutoff) | Indicators that fired | Output | Cited rows | Model calls, time, cost |
+|---|---|---|---|---|
+| `ua-parser-js`, 2021-10-22 13:15 | `release_burst`, `install_script_added` | **Medium.** Three releases across three version lines at the cutoff, plus a new preinstall script. | `ua-parser-js@0.7.29` | 3 calls, 116.8 s, $0.0069 |
+| `event-stream`, 2018-09-09 09:28 | `new_publisher_gap`, `new_dependency` | **Medium.** A new publisher after a 779-day gap released two versions, the latest adding a dependency. | `event-stream@3.3.5`, `event-stream@3.3.6` | 2 calls, 62.9 s, $0.0050 |
+| `coa`, 2021-11-04 14:02 | `release_burst`, `install_script_added` | **Medium.** A publisher returning after a long gap added install scripts across three simultaneous releases. | `coa@2.0.3`, `coa@2.0.4` | 2 calls, 100.0 s, $0.0048 |
+
+Replaying the compiled graph on the same three inputs returns the same Medium verdict with 0 model calls. In a local run, a clean package or an unflagged date takes the cheap path: no indicator fires, so no model is called.
+
+## Agent activity logs
+
+Each file in `data/public/recorded/` is the full trace of one run, in order: Retriever hits (with the Zetaris row counts), the evidence table, the Planner's focus list, each Skeptic and Reporter output with attempt number, the Evaluator's error messages, the retry, and the token and cost meter.
+
+The `ua-parser-js` trace shows the critique and retry loop working. The Reporter's first attempt said **low**. The Evaluator rejected it with `risk_level low contradicts the 2 indicator(s) the Skeptic kept`, the Reporter retried, and the second attempt said **medium**. Open `data/public/recorded/ua-parser-js_20211022T1315.json` and search for `"attempt": 1`.
+
+Evaluation traces for the 40 cases are in `eval/results/` (`cache.jsonl`, `scoreboard.json`).
+
 ## Submission docs
-[Sponsor technology](docs/SPONSOR_TECH.md) · [Demo script](docs/DEMO_SCRIPT.md)
+[Sponsor technology](docs/SPONSOR_TECH.md) 
 
 ## Public demo (read-only)
 A hosted copy runs `PUBLIC_MODE=1` on `data/public/` (see `render.yaml`): replay of the compiled graph, the fleet heatmap, live npm checks, the graph viewer and the scoreboard, with no LLM calls, no rule edits and no data-source switching, so it needs no keys and cannot spend quota. It also replays **recorded agent runs**: real traces captured on a laptop with live Zetaris and Nemotron through Nightshift (`data/public/recorded/`, saved by `POST /api/record`, which only accepts requests from the local machine), played back at about 4x speed and labelled as recorded. New live agent runs and the Zetaris switch run locally (`python3 -m app.server`). Public URL: https://package-trail.onrender.com (free tier: the first load after idle can take about a minute)
